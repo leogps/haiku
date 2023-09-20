@@ -1,10 +1,10 @@
 package com.gps.youtube.dl.test;
 
-import com.gps.youtube.dl.YoutubeDL;
-import com.gps.youtube.dl.YoutubeDLResult;
-import com.gps.youtube.dl.event.YoutubeDLResultEvent;
-import com.gps.youtube.dl.event.YoutubeDLResultEventListener;
-import com.gps.youtube.dl.exception.YoutubeDLException;
+import org.gps.haiku.ytdlp.YoutubeDL;
+import org.gps.haiku.ytdlp.YoutubeDLResult;
+import org.gps.haiku.ytdlp.event.YoutubeDLResultEvent;
+import org.gps.haiku.ytdlp.event.YoutubeDLResultEventListener;
+import org.gps.haiku.ytdlp.exception.YoutubeDLException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

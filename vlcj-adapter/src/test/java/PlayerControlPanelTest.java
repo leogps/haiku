@@ -1,4 +1,4 @@
-import com.gps.itunes.media.player.vlcj.ui.player.BasicPlayerControlPanel;
+import org.gps.haiku.vlcj.player.BasicPlayerControlPanel;
 import org.testng.annotations.Test;
 
 import javax.swing.*;

@@ -1,5 +1,5 @@
 
-import com.gps.itunes.media.player.vlcj.player.impl.TraversableLinkedList;
+import org.gps.haiku.vlcj.player.impl.TraversableLinkedList;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

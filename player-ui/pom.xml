@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>ItunesMediaPlayer</artifactId>
-        <groupId>com.gps.imp</groupId>
+        <artifactId>haiku</artifactId>
+        <groupId>org.gps.haiku</groupId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -13,19 +13,16 @@
 
     <properties>
         <flatlaf.version>2.3</flatlaf.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencies>
 
         <!-- local dependencies -->
         <dependency>
-            <groupId>com.gps.imp</groupId>
+            <groupId>org.gps.haiku</groupId>
             <artifactId>vlcj-adapter</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.gps.imp</groupId>
-            <artifactId>dto</artifactId>
             <version>1.0.0</version>
         </dependency>
 
@@ -57,7 +54,7 @@
             <version>8.0.1</version>
         </dependency>
         <dependency>
-            <groupId>com.gps.imp</groupId>
+            <groupId>org.gps.haiku</groupId>
             <artifactId>db</artifactId>
             <version>1.0.0</version>
         </dependency>
@@ -84,7 +81,7 @@
     </dependencies>
 
     <build>
-        <finalName>ItunesMediaPlayer</finalName>
+        <finalName>haiku</finalName>
 
         <plugins>
 
@@ -135,7 +132,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.gps.itunes.media.player.ui.Main</mainClass>
+                            <mainClass>org.gps.haiku.ui.Main</mainClass>
                         </manifest>
                         <manifestEntries>
                             <SplashScreen-Image>images/splash.gif</SplashScreen-Image>
@@ -163,7 +160,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.gps.itunes.media.player.ui.Main</mainClass>
+                            <mainClass>org.gps.haiku.ui.Main</mainClass>
                         </manifest>
                         <manifestEntries>
                             <SplashScreen-Image>images/splash.gif</SplashScreen-Image>
@@ -177,8 +174,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
 
@@ -227,15 +224,15 @@
                         <phase>package</phase>
                         <configuration>
                             <target name="copy libs and classes into archive.debian project">
-                                <copy todir="../archiver/debian/itunes-media-player/usr/lib/itunes-media-player/lib"
+                                <copy todir="../archiver/debian/haiku/usr/lib/haiku-player/lib"
                                     overwrite="true">
                                     <fileset dir="${project.build.directory}/lib"/>
                                 </copy>
-                                <copy todir="../archiver/debian/itunes-media-player/usr/lib/itunes-media-player/classes"
+                                <copy todir="../archiver/debian/haiku/usr/lib/haiku-player/classes"
                                       overwrite="true">
                                     <fileset dir="${project.build.directory}/classes"/>
                                 </copy>
-                                <copy file="../youtube-dl-exec/youtube-dl" tofile="../archiver/debian/itunes-media-player/usr/lib/itunes-media-player/youtube-dl"
+                                <copy file="../youtube-dl-exec/youtube-dl" tofile="../archiver/debian/haiku/usr/lib/haiku-player/youtube-dl"
                                       overwrite="true"/>
                             </target>
                         </configuration>
@@ -261,8 +258,8 @@
                             <workingDirectory>${project.basedir}</workingDirectory>
                             <arguments>
                                 <argument>-rf</argument>
-                                <argument>${project.build.sourceDirectory}/com/gps/imp</argument>
-                                <argument>${project.build.sourceDirectory}/com/gps/itunes/media/player/vlcj</argument>
+                                <argument>${project.build.sourceDirectory}/org/gps/haiku/utils</argument>
+                                <argument>${project.build.sourceDirectory}/org/gps/haiku/vlcj</argument>
                             </arguments>
                         </configuration>
                     </execution>

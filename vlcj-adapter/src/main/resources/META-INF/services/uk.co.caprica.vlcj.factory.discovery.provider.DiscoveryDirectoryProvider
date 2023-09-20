@@ -1,4 +1,4 @@
-com.gps.itunes.media.player.vlcj.discovery.provider.CustomVlcDirectoryProvider
+org.gps.haiku.vlcj.discovery.provider.CustomVlcDirectoryProvider
 uk.co.caprica.vlcj.factory.discovery.provider.ConfigDirConfigFileDiscoveryDirectoryProvider
 uk.co.caprica.vlcj.factory.discovery.provider.JnaLibraryPathDirectoryProvider
 uk.co.caprica.vlcj.factory.discovery.provider.LinuxWellKnownDirectoryProvider

@@ -1,0 +1,3 @@
+org.gps.haiku.updater.checksum.MD5Handler
+org.gps.haiku.updater.checksum.Sha256Handler
+org.gps.haiku.updater.checksum.Sha512Handler

@@ -3,14 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>ItunesMediaPlayer</artifactId>
-        <groupId>com.gps.imp</groupId>
+        <artifactId>haiku</artifactId>
+        <groupId>org.gps.haiku</groupId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>archiver</artifactId>
-    <description>Archives the ItunesMediaPlayer project as Mac OSX native App using the app template.</description>
+    <description>Archives the project as Mac OSX native App using the app template.</description>
 
     <build>
         <plugins>
@@ -25,7 +25,7 @@
                     <descriptors>
                         <descriptor>${project.parent.basedir}/MacOSX-App-Template/assembly.xml</descriptor>
                     </descriptors>
-                    <finalName>ItunesMediaPlayer.app</finalName>
+                    <finalName>haiku.app</finalName>
                     <outputDirectory>${project.basedir}/target/${os.name}-${os.version}-${os.arch}/</outputDirectory>
                 </configuration>
                 <executions>
@@ -37,30 +37,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- Copy JDK1.6. This has circular simlinks and the maven does not work well with simlinks in general. -->
-<!--            <plugin>-->
-<!--                <artifactId>exec-maven-plugin</artifactId>-->
-<!--                <groupId>org.codehaus.mojo</groupId>-->
-<!--                <version>3.0.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>copy-jdk</id>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>exec</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <executable>/bin/cp</executable>-->
-<!--                            <arguments>-->
-<!--                                <argument>-Rv</argument>-->
-<!--                                <argument>${project.parent.basedir}/1.6.0.jdk</argument>-->
-<!--                                <argument>target/${os.name}-${os.version}-${os.arch}/ItunesMediaPlayer.app/Contents/MacOS/</argument>-->
-<!--                            </arguments>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
         </plugins>
     </build>
 

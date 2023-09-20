@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-java -cp /usr/lib/itunes-media-player/classes:/usr/lib/itunes-media-player/lib/* com.gps.itunes.media.player.ui.Main

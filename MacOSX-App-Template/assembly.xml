@@ -10,7 +10,7 @@
 
         <!-- Using Mac OSX native app template. -->
         <fileSet>
-            <directory>${project.parent.basedir}/MacOSX-App-Template/ItunesMediaPlayer-Template.app/</directory>
+            <directory>${project.parent.basedir}/MacOSX-App-Template/haiku-template.app/</directory>
             <outputDirectory>/</outputDirectory>
         </fileSet>
 
@@ -42,7 +42,7 @@
     <files>
         <!-- Using the player-ui jar file. -->
         <file>
-            <source>${project.parent.basedir}/player-ui/target/ItunesMediaPlayer-jar-with-dependencies.jar</source>
+            <source>${project.parent.basedir}/player-ui/target/haiku-jar-with-dependencies.jar</source>
             <outputDirectory>/Contents/Java</outputDirectory>
         </file>
     </files>
