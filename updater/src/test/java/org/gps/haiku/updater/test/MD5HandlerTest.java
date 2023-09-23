@@ -15,7 +15,7 @@ public class MD5HandlerTest {
     public void testHandler() throws NoSuchAlgorithmException, IOException {
         MD5Handler handler = new MD5Handler();
         Assert.assertTrue(handler.canHandle("MD5SUMS"));
-        File testFile = new File(Objects.requireNonNull(MD5HandlerTest.class.getResource("checksum_test_file")).getFile());
+        File testFile = new File(Objects.requireNonNull(MD5HandlerTest.class.getClassLoader().getResource("checksum_test_file")).getFile());
         String checksum = handler.calculateChecksum(testFile);
         Assert.assertEquals("e479bd09463260ef298d7092ca6ed132", checksum);
     }
