@@ -1,270 +1,316 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>haiku</artifactId>
-        <groupId>org.gps.haiku</groupId>
-        <version>1.0.0</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>haiku</artifactId>
+    <groupId>org.gps.haiku</groupId>
+    <version>1.0.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>player-ui</artifactId>
+  <artifactId>player-ui</artifactId>
 
-    <properties>
-        <flatlaf.version>2.3</flatlaf.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
+  <properties>
+    <flatlaf.version>2.3</flatlaf.version>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+  </properties>
 
-    <dependencies>
+  <dependencies>
 
-        <!-- local dependencies -->
-        <dependency>
-            <groupId>org.gps.haiku</groupId>
-            <artifactId>vlcj-adapter</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+    <!-- local dependencies -->
+    <dependency>
+      <groupId>org.gps.haiku</groupId>
+      <artifactId>vlcj-adapter</artifactId>
+      <version>1.0.0</version>
+    </dependency>
 
-        <!-- ui deps -->
-        <dependency>
-            <groupId>org.jdesktop</groupId>
-            <artifactId>beansbinding</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.swinglabs</groupId>
-            <artifactId>swing-layout</artifactId>
-            <version>1.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>forms_rt</artifactId>
-            <version>7.0.3</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>asm</groupId>
-                    <artifactId>asm-commons</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-commons</artifactId>
-            <version>8.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.gps.haiku</groupId>
-            <artifactId>db</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf</artifactId>
-            <version>${flatlaf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf-extras</artifactId>
-            <version>${flatlaf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf-intellij-themes</artifactId>
-            <version>${flatlaf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-    </dependencies>
+    <!-- ui deps -->
+    <dependency>
+      <groupId>org.jdesktop</groupId>
+      <artifactId>beansbinding</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.swinglabs</groupId>
+      <artifactId>swing-layout</artifactId>
+      <version>1.0.3</version>
+    </dependency>
 
-    <build>
-        <finalName>haiku</finalName>
+    <dependency>
+      <groupId>com.jetbrains.intellij.java</groupId>
+      <artifactId>java-gui-forms-rt</artifactId>
+      <version>${intellij.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jetbrains.intellij.java</groupId>
+      <artifactId>java-compiler-ant-tasks</artifactId>
+      <version>${intellij.version}</version>
+    </dependency>
 
-        <plugins>
+    <dependency>
+      <groupId>org.gps.haiku</groupId>
+      <artifactId>db</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.gps.haiku</groupId>
+      <artifactId>macos-utils</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf</artifactId>
+      <version>${flatlaf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf-extras</artifactId>
+      <version>${flatlaf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf-intellij-themes</artifactId>
+      <version>${flatlaf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+  </dependencies>
 
-            <!-- The plugin is required in any project which uses intellij idea's ui designer. -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>ideauidesigner-maven-plugin</artifactId>
-                <version>1.0-beta-1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>javac2</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <fork>true</fork>
-                    <debug>true</debug>
-                    <failOnError>true</failOnError>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.2</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>org.gps.haiku.ui.Main</mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <SplashScreen-Image>images/splash.gif</SplashScreen-Image>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
+  <build>
+    <finalName>haiku</finalName>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>org.gps.haiku.ui.Main</mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <SplashScreen-Image>images/splash.gif</SplashScreen-Image>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
+    <plugins>
 
-        <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                </configuration>
-            </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/../vlcj-adapter/src/main/java</directory>
-                                    <includes>
-                                        <include>**/*.form</include>
-                                    </includes>
-                                    <filtering>true</filtering>
-                                </resource>
-                                <resource>
-                                    <directory>${project.basedir}/../utils/src/main/java</directory>
-                                    <includes>
-                                        <include>**/*.form</include>
-                                    </includes>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                            <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
-                            <overwrite>true</overwrite>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/../vlcj-adapter/src/main/java</directory>
+                  <includes>
+                    <include>**/*.form</include>
+                  </includes>
+                  <filtering>true</filtering>
+                </resource>
+                <resource>
+                  <directory>${project.basedir}/../utils/src/main/java</directory>
+                  <includes>
+                    <include>**/*.form</include>
+                  </includes>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+              <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
+              <overwrite>true</overwrite>
 
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>copy-archive-debian</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <target name="copy libs and classes into archive.debian project">
-                                <copy todir="../archiver/debian/haiku/usr/lib/haiku-player/lib"
-                                    overwrite="true">
-                                    <fileset dir="${project.build.directory}/lib"/>
-                                </copy>
-                                <copy todir="../archiver/debian/haiku/usr/lib/haiku-player/classes"
-                                      overwrite="true">
-                                    <fileset dir="${project.build.directory}/classes"/>
-                                </copy>
-                                <copy file="../youtube-dl-exec/youtube-dl" tofile="../archiver/debian/haiku/usr/lib/haiku-player/youtube-dl"
-                                      overwrite="true"/>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>delete-folder</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>rm</executable> <!-- Use "del" on Windows -->
-                            <workingDirectory>${project.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>-rf</argument>
-                                <argument>${project.build.sourceDirectory}/org/gps/haiku/utils</argument>
-                                <argument>${project.build.sourceDirectory}/org/gps/haiku/vlcj</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <configuration>
+              <target>
+                <path id="j2sp">
+                  <pathelement location="${project.basedir}/src/main/java"/>
+                </path>
+                <fileset id="ideaLib" dir="${idea.home}">
+                  <include name="**/*.jar"/>
+                </fileset>
+                <fileset id="deps" dir="${project.build.directory}/lib">
+                  <include name="**/*.jar"/>
+                </fileset>
+                <taskdef name="javac2" classpathref="maven.runtime.classpath"
+                  classname="com.intellij.ant.Javac2"/>
+                <javac2 destdir="${project.basedir}/target/classes">
+                  <src refid="j2sp"/>
+                  <classpath>
+                    <fileset refid="ideaLib"/>
+                    <fileset refid="deps"/>
+                  </classpath>
+                </javac2>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>copy-archive-debian</id>
+            <phase>package</phase>
+            <configuration>
+              <target name="copy libs and classes into archive.debian project">
+                <delete failonerror="false">
+                  <fileset dir="../archiver/debian/haiku/usr/lib/haiku-player/lib">
+                    <include name="*.jar" />
+                  </fileset>
+                </delete>
+                <delete dir="../archiver/debian/haiku/usr/lib/haiku-player/classes" failonerror="false"/>
+                <delete failonerror="false">
+                  <fileset dir="../archiver/debian/haiku/usr/lib/haiku-player">
+                    <include name="youtube-dl"/>
+                  </fileset>
+                </delete>
+
+                <copy todir="../archiver/debian/haiku/usr/lib/haiku-player/lib"
+                  overwrite="true">
+                  <fileset dir="${project.build.directory}/lib">
+                    <exclude name="db-${version}.jar"/>
+                    <exclude name="utils-${version}.jar"/>
+                    <exclude name="updater-${version}.jar"/>
+                    <exclude name="youtube-dl-${version}.jar"/>
+                    <exclude name="vlcj-adapter-${version}.jar"/>
+                    <exclude name="macos-utils-${version}.jar"/>
+                  </fileset>
+                </copy>
+                <copy todir="../archiver/debian/haiku/usr/lib/haiku-player/classes"
+                  overwrite="true">
+                  <fileset dir="../db/target/classes"/>
+                  <fileset dir="../utils/target/classes"/>
+                  <fileset dir="../updater/target/classes"/>
+                  <fileset dir="../youtube-dl/target/classes"/>
+                  <fileset dir="../vlcj-adapter/target/classes"/>
+                  <fileset dir="../macos-utils/target/classes"/>
+                  <fileset dir="${project.build.directory}/classes"/>
+                </copy>
+                <copy file="../youtube-dl-exec/youtube-dl"
+                  tofile="../archiver/debian/haiku/usr/lib/haiku-player/youtube-dl"
+                  overwrite="true"/>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>delete-folder</id>
+            <phase>install</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>rm</executable> <!-- Use "del" on Windows -->
+              <workingDirectory>${project.basedir}</workingDirectory>
+              <arguments>
+                <argument>-rf</argument>
+                <argument>${project.build.sourceDirectory}/org/gps/haiku/utils</argument>
+                <argument>${project.build.sourceDirectory}/org/gps/haiku/vlcj</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+              <mainClass>org.gps.haiku.ui.Main</mainClass>
+            </manifest>
+            <manifestEntries>
+              <SplashScreen-Image>images/splash.gif</SplashScreen-Image>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>org.gps.haiku.ui.Main</mainClass>
+            </manifest>
+            <manifestEntries>
+              <SplashScreen-Image>images/splash.gif</SplashScreen-Image>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

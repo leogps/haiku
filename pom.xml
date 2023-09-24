@@ -1,86 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.gps.haiku</groupId>
-    <artifactId>haiku</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0.0</version>
+  <groupId>org.gps.haiku</groupId>
+  <artifactId>haiku</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0.0</version>
 
-    <properties>
-        <http.components.version>5.2.1</http.components.version>
-        <log4j.version>2.17.2</log4j.version>
-        <jackson.version>2.13.5</jackson.version>
-        <jersey.version>3.0.11</jersey.version>
-        <testng.version>7.8.0</testng.version>
-        <openjfx.version>18.0.2</openjfx.version>
+  <properties>
+    <http.components.version>5.2.1</http.components.version>
+    <log4j.version>2.17.2</log4j.version>
+    <jackson.version>2.13.5</jackson.version>
+    <jersey.version>3.0.11</jersey.version>
+    <testng.version>7.8.0</testng.version>
+    <openjfx.version>18.0.2</openjfx.version>
 
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <intellij.version>232.9921.47</intellij.version>
+    <idea.home>/Applications/IntelliJ IDEA.app/Contents/lib</idea.home>
+  </properties>
 
-    <modules>
+  <modules>
+    <module>player-ui</module>
+    <module>youtube-dl</module>
+    <module>vlcj-adapter</module>
+    <module>utils</module>
+    <module>updater</module>
+    <module>archiver</module>
+    <module>db</module>
+    <module>macos-utils</module>
+  </modules>
+
+  <repositories>
+    <repository>
+      <id>jetbrains.releases</id>
+      <url>https://www.jetbrains.com/intellij-repository/releases</url>
+    </repository>
+    <repository>
+      <id>jetbrains.3rdparty</id>
+      <url>https://cache-redirector.jetbrains.com/intellij-dependencies</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+
+    <!-- TestNG -->
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>${testng.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.webjars</groupId>
+          <artifactId>jquery</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <activation>
+        <property>
+          <name>environment</name>
+          <value>dev</value>
+        </property>
+      </activation>
+      <id>dev</id>
+      <modules>
         <module>player-ui</module>
-        <module>youtube-dl</module>
         <module>vlcj-adapter</module>
         <module>utils</module>
-        <module>updater</module>
+        <module>youtube-dl</module>
         <module>archiver</module>
-        <module>db</module>
-        <module>macos-utils</module>
-    </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-
-        <!-- TestNG -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.webjars</groupId>
-                    <artifactId>jquery</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-    </dependencies>
-
-    <profiles>
-        <profile>
-            <activation>
-                <property>
-                    <name>environment</name>
-                    <value>dev</value>
-                </property>
-            </activation>
-            <id>dev</id>
-            <modules>
-                <module>player-ui</module>
-                <module>vlcj-adapter</module>
-                <module>utils</module>
-                <module>youtube-dl</module>
-                <module>archiver</module>
-            </modules>
-        </profile>
-    </profiles>
+      </modules>
+    </profile>
+  </profiles>
 </project>
