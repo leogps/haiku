@@ -2,6 +2,7 @@
 target/
 youtube-dl-exec/
 
+.DS_Store
 haiku.deb
 archiver/debian/haiku/usr/lib/haiku-player/youtube-dl
 archiver/debian/haiku/usr/lib/haiku-player/lib/
