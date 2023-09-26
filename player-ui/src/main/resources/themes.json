@@ -92,6 +92,10 @@
     "className": "com.formdev.flatlaf.intellijthemes.FlatMonocaiIJTheme"
   },
   {
+    "name": "Monokai Pro",
+    "className": "com.formdev.flatlaf.intellijthemes.FlatMonokaiProIJTheme"
+  },
+  {
     "name": "Nord",
     "className": "com.formdev.flatlaf.intellijthemes.FlatNordIJTheme"
   },
@@ -116,71 +120,75 @@
     "className": "com.formdev.flatlaf.intellijthemes.FlatVuesionIJTheme"
   },
   {
-    "name": "Material Deep Ocean Contrast (Material)",
-    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDeepOceanContrastIJTheme"
+    "name": "Xcode-Dark",
+    "className": "com.formdev.flatlaf.intellijthemes.FlatXcodeDarkIJTheme"
+  },
+  {
+    "name": "Arc Dark (Material)",
+    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatArcDarkIJTheme"
+  },
+  {
+    "name": "Atom One Dark (Material)",
+    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme"
+  },
+  {
+    "name": "Atom One Light (Material)",
+    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneLightIJTheme"
+  },
+  {
+    "name": "Dracula (Material)",
+    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatDraculaIJTheme"
+  },
+  {
+    "name": "GitHub (Material)",
+    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatGitHubIJTheme"
+  },
+  {
+    "name": "GitHub Dark (Material)",
+    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatGitHubDarkIJTheme"
+  },
+  {
+    "name": "Light Owl (Material)",
+    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatLightOwlIJTheme"
+  },
+  {
+    "name": "Material Darker (Material)",
+    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDarkerIJTheme"
+  },
+  {
+    "name": "Material Deep Ocean (Material)",
+    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDeepOceanIJTheme"
   },
   {
     "name": "Material Lighter (Material)",
     "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialLighterIJTheme"
   },
   {
-    "name": "Material Lighter Contrast (Material)",
-    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialLighterContrastIJTheme"
-  },
-  {
     "name": "Material Oceanic (Material)",
     "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialOceanicIJTheme"
-  },
-  {
-    "name": "Material Oceanic Contrast (Material)",
-    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialOceanicContrastIJTheme"
   },
   {
     "name": "Material Palenight (Material)",
     "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialPalenightIJTheme"
   },
   {
-    "name": "Material Palenight Contrast (Material)",
-    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialPalenightContrastIJTheme"
-  },
-  {
     "name": "Monokai Pro (Material)",
     "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMonokaiProIJTheme"
-  },
-  {
-    "name": "Monokai Pro Contrast (Material)",
-    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMonokaiProContrastIJTheme"
   },
   {
     "name": "Moonlight (Material)",
     "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMoonlightIJTheme"
   },
   {
-    "name": "Moonlight Contrast (Material)",
-    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMoonlightContrastIJTheme"
-  },
-  {
     "name": "Night Owl (Material)",
     "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatNightOwlIJTheme"
-  },
-  {
-    "name": "Night Owl Contrast (Material)",
-    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatNightOwlContrastIJTheme"
   },
   {
     "name": "Solarized Dark (Material)",
     "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatSolarizedDarkIJTheme"
   },
   {
-    "name": "Solarized Dark Contrast (Material)",
-    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatSolarizedDarkContrastIJTheme"
-  },
-  {
     "name": "Solarized Light (Material)",
     "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatSolarizedLightIJTheme"
-  },
-  {
-    "name": "Solarized Light Contrast (Material)",
-    "className": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatSolarizedLightContrastIJTheme"
   }
 ]

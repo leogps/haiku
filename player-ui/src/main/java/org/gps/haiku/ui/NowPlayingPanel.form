@@ -5,15 +5,11 @@
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
     <properties>
-      <foreground color="-1052689"/>
       <maximumSize width="280" height="40"/>
       <minimumSize width="280" height="40"/>
       <preferredSize width="280" height="40"/>
     </properties>
-    <border type="line" title-resource-bundle="ui" title-key="nowplaying.panel.heading">
-      <font/>
-      <title-color color="-2104859"/>
-    </border>
+    <border type="etched" title-resource-bundle="ui" title-key="nowplaying.panel.heading"/>
     <children>
       <grid id="12e77" binding="centeredPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints border-constraint="Center"/>
@@ -28,7 +24,6 @@
             <constraints border-constraint="Center"/>
             <properties>
               <font/>
-              <foreground color="-2104859"/>
               <horizontalAlignment value="0"/>
               <horizontalTextPosition value="0"/>
               <text value="albumNameHere"/>
@@ -38,7 +33,6 @@
             <constraints border-constraint="North"/>
             <properties>
               <font/>
-              <foreground color="-2104859"/>
               <horizontalAlignment value="0"/>
               <horizontalTextPosition value="0"/>
               <text value="trackNameHere"/>

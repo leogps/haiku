@@ -666,28 +666,11 @@ public class UIFrame extends JFrame {
 
             ObjectMapper objectMapper = new ObjectMapper();
             URL themesList = UIMenuBar.class.getClassLoader().getResource("themes.json");
-            List<UITheme> uiThemes = objectMapper.readValue(themesList, new TypeReference<List<UITheme>>(){});
+            List<UITheme> uiThemes = objectMapper.readValue(themesList, new TypeReference<>() {});
             LOGGER.info(String.format("Loaded %s themes from themes.json", uiThemes.size()));
             for (final UITheme uiTheme : uiThemes) {
-                final JRadioButtonMenuItem themeSubMenuItem = new JRadioButtonMenuItem(uiTheme.getName());
-                themeSubMenuItem.setModel(new UIThemeMenuButtonModel(uiTheme));
-                themeSubMenuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        LOGGER.info("Theme selection made: " + uiTheme.getName());
-                        for (JRadioButtonMenuItem jMenuItem : themesSubMenuList) {
-                            jMenuItem.setSelected(false);
-                        }
-                        boolean success = setUITheme(uiTheme);
-                        if (success) {
-                            themeSubMenuItem.setSelected(true);
-                            saveUITheme(uiTheme);
-                        }
-                    }
-                });
-                if (uiTheme.getClassName().equals( UIManager.getLookAndFeel().getClass().getName())) {
-                    themeSubMenuItem.setSelected(true);
-                }
+                final JRadioButtonMenuItem themeSubMenuItem = buildThemeSubmenuItem(uiTheme,
+                    themesSubMenuList);
                 themesMenuItem.add(themeSubMenuItem);
                 themesSubMenuList.add(themeSubMenuItem);
             }
@@ -695,6 +678,28 @@ public class UIFrame extends JFrame {
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
         }
+    }
+
+    private JRadioButtonMenuItem buildThemeSubmenuItem(UITheme uiTheme,
+        List<JRadioButtonMenuItem> themesSubMenuList)
+    {
+        final JRadioButtonMenuItem themeSubMenuItem = new JRadioButtonMenuItem(uiTheme.getName());
+        themeSubMenuItem.setModel(new UIThemeMenuButtonModel(uiTheme));
+        themeSubMenuItem.addActionListener(actionEvent -> {
+            LOGGER.info("Theme selection made: " + uiTheme.getName());
+            for (JRadioButtonMenuItem jMenuItem : themesSubMenuList) {
+                jMenuItem.setSelected(false);
+            }
+            boolean success = setUITheme(uiTheme);
+            if (success) {
+                themeSubMenuItem.setSelected(true);
+                saveUITheme(uiTheme);
+            }
+        });
+        if (uiTheme.getClassName().equals( UIManager.getLookAndFeel().getClass().getName())) {
+            themeSubMenuItem.setSelected(true);
+        }
+        return themeSubMenuItem;
     }
 
     private void saveUITheme(UITheme uiTheme) {
