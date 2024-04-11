@@ -26,6 +26,7 @@ public class VLCJUtils {
 
         try {
             System.setProperty("jna.debug_load", "true");
+            System.getenv().put("VLC_PLUGIN_PATH", path);
 
             CustomVlcDirectoryProvider.addToCache(path, pluginsPath);
             vlcInitSucceeded = new NativeDiscovery(NativeDiscoveryStrategyResolver.resolve())
@@ -36,10 +37,7 @@ public class VLCJUtils {
             if (LibVlc.libvlc_get_version() != null) {
                 vlcInitSucceeded = true;
             }
-        } catch (UnsatisfiedLinkError ex) {
-            LOGGER.log(Level.WARNING, "Failed to link binaries.", ex);
-            triggerNativeDiscovery(ex);
-        } catch (Exception ex) {
+        } catch (UnsatisfiedLinkError | Exception ex) {
             LOGGER.log(Level.WARNING, "Failed to link binaries.", ex);
             triggerNativeDiscovery(ex);
         } finally {

@@ -231,8 +231,8 @@
                   <fileset dir="../macos-utils/target/classes"/>
                   <fileset dir="${project.build.directory}/classes"/>
                 </copy>
-                <copy file="../youtube-dl-exec/youtube-dl"
-                  tofile="../archiver/debian/haiku/usr/lib/haiku-player/youtube-dl"
+                <copy file="../youtube-dl-exec/${youtube-dl.executable}"
+                  tofile="../archiver/debian/haiku/usr/lib/haiku-player/${youtube-dl.executable}"
                   overwrite="true"/>
               </target>
             </configuration>
@@ -254,10 +254,9 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>rm</executable> <!-- Use "del" on Windows -->
+              <executable>build-src-cleanup${script.extension}</executable> <!-- Use "del" on Windows -->
               <workingDirectory>${project.basedir}</workingDirectory>
               <arguments>
-                <argument>-rf</argument>
                 <argument>${project.build.sourceDirectory}/org/gps/haiku/utils</argument>
                 <argument>${project.build.sourceDirectory}/org/gps/haiku/vlcj</argument>
               </arguments>

@@ -20,7 +20,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <intellij.version>232.9921.47</intellij.version>
-    <idea.home>/Applications/IntelliJ IDEA.app/Contents/lib</idea.home>
+    <idea.home>..\..\..\..\..\..\Program Files\JetBrains\IntelliJ IDEA 2024.1\lib</idea.home>
   </properties>
 
   <modules>
@@ -94,6 +94,30 @@
         <module>youtube-dl</module>
         <module>archiver</module>
       </modules>
+    </profile>
+    <profile>
+      <id>Windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <script.extension>.bat</script.extension>
+        <youtube-dl.executable>youtube-dl.exe</youtube-dl.executable>
+      </properties>
+    </profile>
+    <profile>
+      <id>unix</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <properties>
+        <script.extension>.sh</script.extension>
+        <youtube-dl.executable>youtube-dl</youtube-dl.executable>
+      </properties>
     </profile>
   </profiles>
 </project>

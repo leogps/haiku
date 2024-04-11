@@ -43,7 +43,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>${basedir}/youtube-dl-download.sh</executable>
+              <executable>${basedir}/youtube-dl-download${script.extension}</executable>
             </configuration>
           </execution>
         </executions>
