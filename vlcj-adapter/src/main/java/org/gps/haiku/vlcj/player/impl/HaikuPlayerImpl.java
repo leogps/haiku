@@ -991,10 +991,10 @@ public class HaikuPlayerImpl implements HaikuPlayer {
 
                     try {
 //                        mediaPlayer.subitems().controls().play();
-                        if(togglingFullscreen) {
-                            LOGGER.debug("Playing already loaded media: " + this.currentTrack.getLocation());
-                            mediaPlayer.subitems().controls().play();
-                        } else {
+//                        if(togglingFullscreen) {
+//                            LOGGER.debug("Playing already loaded media: " + this.currentTrack.getLocation());
+//                            mediaPlayer.subitems().controls().play();
+//                        } else {
                             LOGGER.debug("Loading and playing new media...");
                             //TODO: Make options dynamic from UI.
                             String[] options = loadMediaPlayerOptions();
@@ -1004,7 +1004,7 @@ public class HaikuPlayerImpl implements HaikuPlayer {
                             LOGGER.info("Starting media: " + this.currentTrack.getLocation());
                             mediaPlayer.media().start(this.currentTrack.getLocation(), options);
 
-                        }
+//                        }
 
                         if (startFrom != 0) {
                             LOGGER.debug("Setting media position to: " + startFrom);
