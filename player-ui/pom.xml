@@ -254,7 +254,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>build-src-cleanup${script.extension}</executable> <!-- Use "del" on Windows -->
+              <executable>${project.basedir}/build-src-cleanup${script.extension}</executable>
               <workingDirectory>${project.basedir}</workingDirectory>
               <arguments>
                 <argument>${project.build.sourceDirectory}/org/gps/haiku/utils</argument>
