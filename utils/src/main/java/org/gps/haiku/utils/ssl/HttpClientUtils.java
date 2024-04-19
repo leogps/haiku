@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class HttpClientUtils {
 
-    private static final Logger LOGGER = LogManager.getLogger(HttpClientUtils.client);
+    private static final Logger LOGGER = LogManager.getLogger(HttpClientUtils.class);
 
     @Getter
     private static final Client client;
