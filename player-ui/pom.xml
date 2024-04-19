@@ -23,7 +23,7 @@
     <dependency>
       <groupId>org.gps.haiku</groupId>
       <artifactId>vlcj-adapter</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- ui deps -->
@@ -39,25 +39,20 @@
     </dependency>
 
     <dependency>
-      <groupId>com.jetbrains.intellij.java</groupId>
-      <artifactId>java-gui-forms-rt</artifactId>
-      <version>${intellij.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.jetbrains.intellij.java</groupId>
-      <artifactId>java-compiler-ant-tasks</artifactId>
-      <version>${intellij.version}</version>
+      <groupId>org.gps.haiku</groupId>
+      <artifactId>gui-builder</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.gps.haiku</groupId>
       <artifactId>db</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.gps.haiku</groupId>
       <artifactId>macos-utils</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.formdev</groupId>
@@ -152,7 +147,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>3.1.0</version>
@@ -164,7 +158,7 @@
                 <path id="j2sp">
                   <pathelement location="${project.basedir}/src/main/java"/>
                 </path>
-                <fileset id="ideaLib" dir="${idea.home}">
+                <fileset id="ideaLib" dir="${project.build.directory}/lib">
                   <include name="**/*.jar"/>
                 </fileset>
                 <fileset id="deps" dir="${project.build.directory}/lib">
@@ -213,12 +207,12 @@
                 <copy todir="../archiver/debian/haiku/usr/lib/haiku-player/lib"
                   overwrite="true">
                   <fileset dir="${project.build.directory}/lib">
-                    <exclude name="db-${version}.jar"/>
-                    <exclude name="utils-${version}.jar"/>
-                    <exclude name="updater-${version}.jar"/>
-                    <exclude name="youtube-dl-${version}.jar"/>
-                    <exclude name="vlcj-adapter-${version}.jar"/>
-                    <exclude name="macos-utils-${version}.jar"/>
+                    <exclude name="db-${project.version}.jar"/>
+                    <exclude name="utils-${project.version}.jar"/>
+                    <exclude name="updater-${project.version}.jar"/>
+                    <exclude name="youtube-dl-${project.version}.jar"/>
+                    <exclude name="vlcj-adapter-${project.version}.jar"/>
+                    <exclude name="macos-utils-${project.version}.jar"/>
                   </fileset>
                 </copy>
                 <copy todir="../archiver/debian/haiku/usr/lib/haiku-player/classes"

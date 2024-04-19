@@ -20,7 +20,7 @@
     <dependency>
       <groupId>org.gps.haiku</groupId>
       <artifactId>utils</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -57,7 +57,7 @@
     <dependency>
       <groupId>org.gps.haiku</groupId>
       <artifactId>youtube-dl</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -72,14 +72,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.jetbrains.intellij.java</groupId>
-      <artifactId>java-gui-forms-rt</artifactId>
-      <version>${intellij.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.jetbrains.intellij.java</groupId>
-      <artifactId>java-compiler-ant-tasks</artifactId>
-      <version>${intellij.version}</version>
+      <groupId>org.gps.haiku</groupId>
+      <artifactId>gui-builder</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -126,7 +121,7 @@
         <executions>
           <execution>
             <id>copy-dependencies</id>
-            <phase>package</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -151,7 +146,7 @@
                 <path id="j2sp">
                   <pathelement location="${project.basedir}/src/main/java"/>
                 </path>
-                <fileset id="ideaLib" dir="${idea.home}">
+                <fileset id="ideaLib" dir="${project.build.directory}/lib">
                   <include name="**/*.jar"/>
                 </fileset>
                 <taskdef name="javac2" classpathref="maven.runtime.classpath"

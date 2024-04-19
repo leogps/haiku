@@ -15,12 +15,12 @@
     <dependency>
       <groupId>org.gps.haiku</groupId>
       <artifactId>utils</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.gps.haiku</groupId>
       <artifactId>updater</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>

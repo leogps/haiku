@@ -1,6 +1,7 @@
 package org.gps.haiku.vlcj.player.events;
 
 import org.gps.haiku.utils.Constants;
+import org.gps.haiku.utils.OSInfo;
 import org.gps.haiku.utils.ui.ApplicationExitHandler;
 
 import javax.swing.*;
@@ -127,8 +128,9 @@ public class VideoPlayerKeyListener extends PlayerKeyEventListener {
         /**
          * App Exit.
          */
-        if (keyEvent.getKeyCode() == KeyEvent.VK_Q
-                && (((keyEvent.getModifiers() & KeyEvent.CTRL_MASK) != 0) || (keyEvent.getModifiers() & KeyEvent.VK_META) != 0)) {
+        if (!OSInfo.isOSMac() // For MacOS, we handle this differently.
+                && (keyEvent.getKeyCode() == KeyEvent.VK_Q
+                && (((keyEvent.getModifiers() & KeyEvent.CTRL_MASK) != 0) || (keyEvent.getModifiers() & KeyEvent.VK_META) != 0))) {
             ApplicationExitHandler.handle(videoPlayerFrame);
         }
     }

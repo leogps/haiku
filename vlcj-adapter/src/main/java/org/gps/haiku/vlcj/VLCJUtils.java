@@ -26,7 +26,6 @@ public class VLCJUtils {
 
         try {
             System.setProperty("jna.debug_load", "true");
-            System.getenv().put("VLC_PLUGIN_PATH", path);
 
             CustomVlcDirectoryProvider.addToCache(path, pluginsPath);
             vlcInitSucceeded = new NativeDiscovery(NativeDiscoveryStrategyResolver.resolve())

@@ -623,12 +623,7 @@ public class UIFrame extends JFrame {
             }
         });
 
-        uiMenuBar.getExitMenuItem().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                ApplicationExitHandler.handle(instance);
-            }
-        });
+        uiMenuBar.getExitMenuItem().addActionListener(actionEvent -> ApplicationExitHandler.handle(instance));
 
         this.setExtendedState(MAXIMIZED_BOTH);
 

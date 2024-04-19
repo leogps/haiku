@@ -19,8 +19,7 @@
 
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <intellij.version>232.9921.47</intellij.version>
-    <idea.home>..\..\..\..\..\..\Program Files\JetBrains\IntelliJ IDEA 2024.1\lib</idea.home>
+    <intellij.version>241.14494.241</intellij.version>
   </properties>
 
   <modules>
@@ -32,6 +31,7 @@
     <module>archiver</module>
     <module>db</module>
     <module>macos-utils</module>
+    <module>gui-builder</module>
   </modules>
 
   <repositories>

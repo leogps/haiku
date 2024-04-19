@@ -9,7 +9,9 @@ import org.gps.haiku.db.model.ConfigProperty;
 import org.gps.haiku.ui.config.AppConfiguration;
 import org.gps.haiku.ui.controller.Controller;
 import org.gps.haiku.ui.theme.UITheme;
+import org.gps.haiku.utils.JavaVersionUtils;
 import org.gps.haiku.utils.PropertyManager;
+import org.gps.haiku.utils.ui.ApplicationExitHandler;
 import org.gps.haiku.vlcj.player.events.UIDropTarget;
 import org.gps.haiku.ui.events.UIFrameEventListener;
 import org.gps.haiku.ui.exceptions.TaskExecutionException;
@@ -103,6 +105,10 @@ public class Main {
             }
             try {
                 Class.forName("org.gps.haiku.macos.utils.MacOsUtils");
+                if (OSInfo.isOSMac() && Desktop.isDesktopSupported()) {
+                    Desktop desktop = Desktop.getDesktop();
+                    desktop.setQuitHandler((evt, res) -> {/*.do nothing.*/});
+                }
             } catch (ClassNotFoundException e) {
                 LOGGER.debug(e.getMessage(), e);
             }
@@ -137,15 +143,25 @@ public class Main {
 
                 splashAnimator.renderSplashFrame(20, "Initializing UI Frames...");
                 final UIFrame uiFrame = new UIFrame();
-                if(OSInfo.isOSMac()) {
-                    try {
+                if (OSInfo.isOSMac()) {
+                    uiFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                    uiFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+                        @Override
+                        public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                            ApplicationExitHandler.handle(uiFrame);
+                        }
+                    });
+                    if(!JavaVersionUtils.isGreaterThan6()) {
+                        try {
 
-                        Object instance = Class.forName("com.apple.eawt.Application").getMethod("getApplication").invoke(null);
-                        Class.forName("com.apple.eawt.Application").getMethod("requestUserAttention", boolean.class).invoke(instance, true);
-                    } catch (Exception ex) {
-                        LOGGER.error(ex.getMessage(), ex);
+                            Object instance = Class.forName("com.apple.eawt.Application").getMethod("getApplication").invoke(null);
+                            Class.forName("com.apple.eawt.Application").getMethod("requestUserAttention", boolean.class).invoke(instance, true);
+                        } catch (Exception ex) {
+                            LOGGER.error(ex.getMessage(), ex);
+                        }
                     }
                 }
+
                 uiFrame.setDropTarget(new UIDropTarget() {
                     @Override
                     public void onFilesDroppedEvent(List<File> fileList, DropTargetDropEvent dropTargetDropEvent) {
