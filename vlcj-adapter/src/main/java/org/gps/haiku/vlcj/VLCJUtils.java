@@ -18,11 +18,18 @@ public class VLCJUtils {
     private static final Logger LOGGER = Logger.getLogger(VLCJUtils.class.getName());
 
     static {
+        String osArch = System.getProperty("os.arch");
+        String vlcPath = String.format("vlc-%s", osArch);
+        String vlcPluginsPath = String.format("vlc-%s-plugins", osArch);
+
+        LOGGER.info("VlcPath: " + vlcPath);
+        LOGGER.info("VlcPluginsPath: " + vlcPluginsPath);
+
         String path = new File("").getAbsolutePath()
-                + PropertyManager.getProperty("vlc-intel-64");
+                + PropertyManager.getProperty(vlcPath);
 
         String pluginsPath = new File("").getAbsolutePath()
-                + PropertyManager.getProperty("vlc-intel-64-plugins");
+                + PropertyManager.getProperty(vlcPluginsPath);
 
         try {
             System.setProperty("jna.debug_load", "true");

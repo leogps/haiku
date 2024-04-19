@@ -268,7 +268,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>org.gps.haiku.ui.Main</mainClass>
+              <mainClass>org.gps.haiku.ui.Haiku</mainClass>
             </manifest>
             <manifestEntries>
               <SplashScreen-Image>images/splash.gif</SplashScreen-Image>
@@ -296,7 +296,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>org.gps.haiku.ui.Main</mainClass>
+              <mainClass>org.gps.haiku.ui.Haiku</mainClass>
             </manifest>
             <manifestEntries>
               <SplashScreen-Image>images/splash.gif</SplashScreen-Image>

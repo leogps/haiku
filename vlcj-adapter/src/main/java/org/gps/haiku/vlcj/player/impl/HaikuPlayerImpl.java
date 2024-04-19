@@ -15,13 +15,18 @@ import org.gps.haiku.utils.ui.fileutils.FileBrowserDialogListener;
 import org.gps.haiku.vlcj.player.*;
 import org.gps.haiku.vlcj.player.events.*;
 import org.gps.haiku.vlcj.player.events.handler.NetworkFileOpenEventHandler;
+import org.gps.haiku.vlcj.player.playlist.PlaylistItem;
+import org.gps.haiku.vlcj.player.playlist.ProcessedPlaylistItem;
 import org.gps.haiku.vlcj.player.utils.GoToSpinnerDialog;
 import org.gps.haiku.vlcj.player.utils.TrackTime;
 import org.gps.haiku.vlcj.utils.YoutubeDLUtils;
 import org.gps.haiku.ytdlp.YoutubeDL;
 import org.gps.haiku.ytdlp.YoutubeDLProcessor;
 import org.gps.haiku.ytdlp.YoutubeDLResult;
+import org.gps.haiku.ytdlp.YoutubeVideo;
 import org.gps.haiku.ytdlp.event.YoutubeDLResultEventListener;
+import org.gps.haiku.ytdlp.event.YoutubeVideoRetrievedEventListener;
+import org.gps.haiku.ytdlp.exception.YoutubeDLException;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.TextTrackInfo;
 import uk.co.caprica.vlcj.media.TrackInfo;
@@ -30,13 +35,14 @@ import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.time.Instant;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -70,7 +76,7 @@ public class HaikuPlayerImpl implements HaikuPlayer {
     /**
      * Holds currently playing track.
      */
-    private NowPlayingListData currentTrack;
+    private PlaylistItem currentTrack;
 
     private final Lock lock = new ReentrantLock();
 
@@ -83,31 +89,31 @@ public class HaikuPlayerImpl implements HaikuPlayer {
     /**
      * Now Playing list.
      */
-    private final TraversableLinkedList<NowPlayingListData> nowPlayingList = new TraversableLinkedList<NowPlayingListData>() {
+    private final TraversableLinkedList<PlaylistItem> playlist = new TraversableLinkedList<>() {
         @Override
-        public boolean add(NowPlayingListData nowPlayingListData) {
-            boolean added = super.add(nowPlayingListData);
-            nowPlayingListFrame.add(nowPlayingListData);
+        public boolean add(PlaylistItem playlistItem) {
+            boolean added = super.add(playlistItem);
+            playlistFrame.add(playlistItem);
             return added;
         }
 
         @Override
         public void clear() {
             super.clear();
-            nowPlayingListFrame.clear();
+            playlistFrame.clear();
         }
     };
 
     /**
      * Now Playing List frame.
      */
-    private final NowPlayingListFrame nowPlayingListFrame = new NowPlayingListFrame();
+    private final PlaylistFrame playlistFrame = new PlaylistFrame();
 
     /**
      * List iterator to traverse left and right in the playlist.
      */
-    private final TraversableLinkedList<NowPlayingListData>.ListTraverser<NowPlayingListData> listTraverser
-            = nowPlayingList.getListTraverser();
+    private final TraversableLinkedList<PlaylistItem>.ListTraverser<PlaylistItem> listTraverser
+            = playlist.getListTraverser();
 
     /**
      * Audio Player that is closely bound to the VLCJ adapter.
@@ -322,13 +328,13 @@ public class HaikuPlayerImpl implements HaikuPlayer {
         VLCJ_VIDEO_PLAYER.attachCommandListener(videoPlayerMouseWheelListener);
 
         addMediaPlayerListener(new MediaPlayerEventListener() {
-            public void playing(HaikuPlayer player, NowPlayingListData currentTrack) {
+            public void playing(HaikuPlayer player, PlaylistItem currentTrack) {
                 LOGGER.info("Playing.");
                 updateStatusCells(true);
             }
 
             private void updateStatusCells(final boolean isPlaying) {
-                nowPlayingListFrame.updateCellStatus(isPlaying, currentTrack.getTrackId());
+                playlistFrame.updateCellStatus(isPlaying, currentTrack.getTrackId());
             }
 
             public void paused(HaikuPlayer player, String location) {
@@ -341,11 +347,11 @@ public class HaikuPlayerImpl implements HaikuPlayer {
             public void onPlayProgressed() {}
         });
 
-        nowPlayingListFrame.addNowPlayingListTrackSelectedEventListener(nowPlayingListData -> {
+        playlistFrame.addNowPlayingListTrackSelectedEventListener(nowPlayingListData -> {
             try {
                 lock.lock();
                 stopPlay();
-                nowPlayingList.traverseTo(nowPlayingListData);
+                playlist.traverseTo(nowPlayingListData);
                 currentTrack = nowPlayingListData;
                 play();
             } finally {
@@ -432,6 +438,7 @@ public class HaikuPlayerImpl implements HaikuPlayer {
 
     public void handleNetworkFileOpenEvent() {
         String url = new NetworkFileOpenEventHandler().handle();
+        url = HttpClientUtils.tryParse(url);
         if(url != null) {
             try {
                 play(new URL(url));
@@ -602,8 +609,8 @@ public class HaikuPlayerImpl implements HaikuPlayer {
             VLCJ_AUDIO_PLAYER.setPlaying();
             VLCJ_VIDEO_PLAYER.setPlaying();
 
-            if(!nowPlayingListFrame.isVisible()) {
-                nowPlayingListFrame.setVisible(true);
+            if(!playlistFrame.isVisible()) {
+                playlistFrame.setVisible(true);
             }
 
             registerPlayProgressHandler(mediaPlayer);
@@ -648,9 +655,9 @@ public class HaikuPlayerImpl implements HaikuPlayer {
 
         if(!files.isEmpty()) {
             File file = files.get(0);
-            NowPlayingListData nowPlayingListData = new NowPlayingListData(nowPlayingList.size(), file.getName(), file.getName(), file.getName(),
-                    file.getAbsolutePath(), true);
-            addTrack(nowPlayingListData);
+            PlaylistItem<File> playlistItem = new ProcessedPlaylistItem<>(playlist.size(), file.getName(), file.getName(), file.getName(),
+                    file.getAbsolutePath(), true, file);
+            addTrack(playlistItem);
         }
 
         //resetIteratorPos();
@@ -665,9 +672,9 @@ public class HaikuPlayerImpl implements HaikuPlayer {
         SwingUtilities.invokeLater(() -> {
             for (int i = 1; i < files.size(); i++) {
                 File file = files.get(i);
-                NowPlayingListData nowPlayingListData = new NowPlayingListData(nowPlayingList.size(), file.getName(), file.getName(), file.getName(),
-                        file.getAbsolutePath(), true);
-                addTrack(nowPlayingListData);
+                PlaylistItem<File> playlistItem = new ProcessedPlaylistItem<>(playlist.size(), file.getName(), file.getName(), file.getName(),
+                        file.getAbsolutePath(), true, file);
+                addTrack(playlistItem);
             }
         });
 
@@ -675,17 +682,17 @@ public class HaikuPlayerImpl implements HaikuPlayer {
 
     public void play(File file) {
         this.stopPlay();
-        nowPlayingList.clear();
+        playlist.clear();
 
-        this.currentTrack = new NowPlayingListData(nowPlayingList.size(), file.getName(), file.getName(), file.getName(),
-                file.getAbsolutePath(), true);
-        nowPlayingList.add(currentTrack);
+        this.currentTrack = new ProcessedPlaylistItem<>(playlist.size(), file.getName(), file.getName(), file.getName(),
+                file.getAbsolutePath(), true, file);
+        playlist.add(currentTrack);
         new Thread(this).start();
     }
 
     public void play(URL url) {
         this.stopPlay();
-        nowPlayingList.clear();
+        playlist.clear();
 
         final String urlStr = url.toString();
 
@@ -699,11 +706,11 @@ public class HaikuPlayerImpl implements HaikuPlayer {
         }
     }
 
-    private void fallbackToYoutubeDL(final String urlStr) {
+    private void fallbackToYoutubeDL(final String urlStr, YoutubeVideoRetrievedEventListener... listeners) {
         String youtubeDLExecutable = YoutubeDLUtils.fetchYoutubeDLExecutable();
         String youtubeDLAdditionalArgs = YoutubeDLUtils.fetchAdditionalArgs();
         try {
-            final InterruptableAsyncTask asyncProcess;
+            final InterruptableAsyncTask<?, ?> asyncProcess;
             final InterruptableProcessDialog interruptableProcessDialog;
 
             boolean watchURLProcessed = false;
@@ -711,21 +718,27 @@ public class HaikuPlayerImpl implements HaikuPlayer {
 
                 // Fetch watch video first and then fetch playlist urls.
                 String effectiveURL = urlStr;
+                AtomicReference<YoutubeDLResult> processedURL = new AtomicReference<>();
                 if(YoutubeDL.isWatchURL(urlStr)) {
                     String watchURL = YoutubeDL.normalizeWatchURL(urlStr);
-                    fallbackToYoutubeDL(watchURL);
+                    fallbackToYoutubeDL(watchURL, youtubeDLResultEvent -> {
+                        processedURL.set(youtubeDLResultEvent.getYoutubeDLResult());
+                    });
                     watchURLProcessed = true;
                     effectiveURL = YoutubeDL.normalizePlaylistURL(urlStr);
                 }
 
                 asyncProcess = YoutubeDL.fetchPlaylistAsync(youtubeDLExecutable, youtubeDLAdditionalArgs, effectiveURL);
                 interruptableProcessDialog = new InterruptableProcessDialog(asyncProcess, false);
-                YoutubeDLResultEventListener youtubeDLResultEventListener = fetchDefaultPlaylistFetchProcessListener(effectiveURL, watchURLProcessed);
-                ((YoutubeDLProcessor) asyncProcess).addYoutubeDLResultEventListener(youtubeDLResultEventListener);
+                YoutubeDLResultEventListener youtubeDLResultEventListener
+                        = fetchDefaultPlaylistFetchProcessListener(effectiveURL, watchURLProcessed, processedURL.get());
+                YoutubeDLProcessor processor = ((YoutubeDLProcessor) asyncProcess);
+                processor.addYoutubeDLResultEventListener(youtubeDLResultEventListener);
 
             } else {
                 asyncProcess =
-                    YoutubeDL.fetchBestAsyncProcess(youtubeDLExecutable, youtubeDLAdditionalArgs, urlStr, fetchDefaultFetchProcessListeners(urlStr));
+                    YoutubeDL.fetchBestAsyncProcess(youtubeDLExecutable, youtubeDLAdditionalArgs, urlStr,
+                            fetchDefaultFetchProcessListeners(urlStr, listeners));
                 interruptableProcessDialog = new InterruptableProcessDialog(asyncProcess, true);
             }
 
@@ -754,24 +767,31 @@ public class HaikuPlayerImpl implements HaikuPlayer {
         }
     }
 
-    private YoutubeDLResultEventListener fetchDefaultPlaylistFetchProcessListener(final String urlStr, final boolean watchURLProcessed) {
+    private YoutubeDLResultEventListener fetchDefaultPlaylistFetchProcessListener(final String urlStr,
+                                                                                  final boolean watchURLProcessed,
+                                                                                  final YoutubeDLResult skipVideo) {
         final AtomicInteger counter = new AtomicInteger(0);
         return youtubeDLResultEvent -> {
             YoutubeDLResult youtubeDLResult = youtubeDLResultEvent.getYoutubeDLResult();
+            YoutubeVideo youtubeVideo = new YoutubeVideo(urlStr, youtubeDLResult, true);
             if(counter.incrementAndGet() == 1 && !watchURLProcessed) {
-
-                doHandleYoutubeDLCompletion(youtubeDLResult, urlStr);
+                doHandleYoutubeDLCompletion(youtubeVideo, urlStr);
 
             } else {
+                if (watchURLProcessed && skipVideo != null
+                        && Objects.equals(youtubeDLResult.getId(), skipVideo.getId())) {
+                    LOGGER.debug(String.format("Skipping youtube video from adding to playlist: %s", youtubeVideo));
+                    return;
+                }
                 // Adding to now playing list.
                 String retrievedTitle = youtubeDLResult.getTitle();
                 String retrievedUrl = youtubeDLResult.getUrl();
                 String retrievedFilename = youtubeDLResult.getFilename();
 
-                NowPlayingListData nowPlayingListData = new NowPlayingListData(nowPlayingList.size(), retrievedTitle, retrievedTitle, retrievedFilename,
-                        retrievedUrl, true);
-                addTrack(nowPlayingListData);
-                LOGGER.debug(String.format("Added %s to playlist at position %s", retrievedFilename, nowPlayingList.size()));
+                PlaylistItem<YoutubeVideo> playlistItem = new ProcessedPlaylistItem<>(playlist.size(), retrievedTitle, retrievedTitle, retrievedFilename,
+                        retrievedUrl, true, youtubeVideo);
+                addTrack(playlistItem);
+                LOGGER.debug(String.format("Added %s to playlist at position %s", retrievedFilename, playlist.size()));
             }
         };
     }
@@ -785,12 +805,13 @@ public class HaikuPlayerImpl implements HaikuPlayer {
         LOGGER.error(message, ex);
     }
 
-    private List<AsyncTaskListener> fetchDefaultFetchProcessListeners(final String urlStr) {
+    private List<AsyncTaskListener> fetchDefaultFetchProcessListeners(final String urlStr,
+                                                                      YoutubeVideoRetrievedEventListener... listeners) {
         AsyncTaskListener asyncTaskListener = new AsyncTaskListener() {
             public void onSuccess(InterruptableAsyncTask interruptableAsyncTask) {
                 if(!interruptableAsyncTask.isInterrupted()) {
                     AsyncProcess asyncProcess = (AsyncProcess) interruptableAsyncTask;
-                    handleYoutubeDLCompletion(asyncProcess.getProcess(), urlStr);
+                    handleYoutubeDLCompletion(asyncProcess.getProcess(), urlStr, listeners);
                 }
             }
 
@@ -803,26 +824,38 @@ public class HaikuPlayerImpl implements HaikuPlayer {
         return wrapInList(asyncTaskListener);
     }
 
-    private void handleYoutubeDLCompletion(Process process, String urlStr) {
+    private YoutubeVideo retrieveYoutubeVideo(Process process,
+                                              String urlStr,
+                                              YoutubeVideoRetrievedEventListener... listeners) throws YoutubeDLException, IOException {
+        YoutubeDLResult youtubeDLResult = YoutubeDL.retrieveYoutubeDLResult(process);
+        YoutubeVideo youtubeVideo = new YoutubeVideo(urlStr, youtubeDLResult, false);
+        if (listeners != null) {
+            for (YoutubeVideoRetrievedEventListener listener: listeners) {
+                listener.onYoutubeVideoRetrieved(youtubeVideo);
+            }
+        }
+        return youtubeVideo;
+    }
+
+    private void handleYoutubeDLCompletion(Process process, String urlStr, YoutubeVideoRetrievedEventListener... listeners) {
         try {
-            YoutubeDLResult youtubeDLResult = YoutubeDL.retrieveYoutubeDLResult(process);
-            doHandleYoutubeDLCompletion(youtubeDLResult, urlStr);
+            final YoutubeVideo youtubeVideo = retrieveYoutubeVideo(process, urlStr, listeners);
+            doHandleYoutubeDLCompletion(youtubeVideo, urlStr);
         } catch (Exception ex) {
             handleYoutubeDLFailure(ex.getMessage(), ex, urlStr);
         }
     }
 
-    private void doHandleYoutubeDLCompletion(YoutubeDLResult youtubeDLResult, String urlStr) {
+    private void doHandleYoutubeDLCompletion(YoutubeVideo youtubeVideo, String urlStr) {
         try {
-            clearNowPlayingList();
+            final YoutubeDLResult result = youtubeVideo.getYoutubeDLResult();
+            String retrievedTitle = result.getTitle();
+            String retrievedUrl = result.getUrl();
+            String retrievedFilename = result.getFilename();
+            this.currentTrack = new ProcessedPlaylistItem<>(playlist.size(), retrievedTitle, retrievedTitle, retrievedFilename,
+                    retrievedUrl, true, youtubeVideo);
 
-            String retrievedTitle = youtubeDLResult.getTitle();
-            String retrievedUrl = youtubeDLResult.getUrl();
-            String retrievedFilename = youtubeDLResult.getFilename();
-            this.currentTrack = new NowPlayingListData(nowPlayingList.size(), retrievedTitle, retrievedTitle, retrievedFilename,
-                    retrievedUrl, true);
-
-            LOGGER.debug(youtubeDLResult);
+            LOGGER.debug(result);
 
             addToNowPlayingListAndStartPlaying();
         } catch (Exception ex) {
@@ -846,11 +879,11 @@ public class HaikuPlayerImpl implements HaikuPlayer {
                     return false;
                 }
 
-                this.currentTrack = new NowPlayingListData(nowPlayingList.size(), youtubeLink.getFileName(), urlStr, urlStr,
-                        urlStr, true);
+                this.currentTrack = new ProcessedPlaylistItem<>(playlist.size(), youtubeLink.getFileName(), urlStr, urlStr,
+                        urlStr, true, urlStr);
             } else {
-                this.currentTrack = new NowPlayingListData(nowPlayingList.size(), urlStr, urlStr, urlStr,
-                        urlStr, true);
+                this.currentTrack = new ProcessedPlaylistItem<>(playlist.size(), urlStr, urlStr, urlStr,
+                        urlStr, true, urlStr);
             }
 
             addToNowPlayingListAndStartPlaying();
@@ -866,10 +899,8 @@ public class HaikuPlayerImpl implements HaikuPlayer {
     }
 
     private boolean testURL(String urlStr) {
-        Client client = null;
         try {
-             client = HttpClientUtils.getNewClient();
-
+            Client client = HttpClientUtils.getClient();
             Response response = client.target(urlStr).
                     request()
                     .get();
@@ -880,16 +911,12 @@ public class HaikuPlayerImpl implements HaikuPlayer {
         } catch (Exception e) {
             LOGGER.error(String.format("Exception occurred when fetching URL: %s", urlStr), e);
             return false;
-        } finally {
-            if(client != null) {
-                client.close();
-            }
         }
         return true;
     }
 
     private void addToNowPlayingListAndStartPlaying() {
-        nowPlayingList.add(currentTrack);
+        playlist.add(currentTrack);
         new Thread(this).start();
     }
 
@@ -919,11 +946,13 @@ public class HaikuPlayerImpl implements HaikuPlayer {
 
     public void stopPlay() {
         for(VLCJPlayer vlcjPlayer : VLCJ_PLAYERS) {
-            vlcjPlayer.getPlayer().controls().stop();
+            final MediaPlayer mediaPlayer = vlcjPlayer.getPlayer();
+            if (mediaPlayer.media().isValid() && mediaPlayer.status().isPlaying()) {
+                mediaPlayer.media().newMedia();
+                mediaPlayer.controls().stop();
+            }
         }
         LOGGER.info("Playing stopped");
-        VLCJ_AUDIO_PLAYER.setPaused();
-        VLCJ_VIDEO_PLAYER.setPaused();
     }
 
     public int getVolume() {
@@ -950,6 +979,7 @@ public class HaikuPlayerImpl implements HaikuPlayer {
             }
         }
         try {
+            handleExpiredYoutubeVideo();
             if (this.currentTrack != null && this.currentTrack.getLocation() != null) {
 
                 LOGGER.debug("Signal count" + playSignal.getCount());
@@ -1035,6 +1065,86 @@ public class HaikuPlayerImpl implements HaikuPlayer {
         }
     }
 
+    private void handleExpiredYoutubeVideo() {
+        if (!(currentTrack.getModel() instanceof YoutubeVideo)) {
+            return;
+        }
+        final YoutubeVideo video = (YoutubeVideo) currentTrack.getModel();
+        Date videoExpiryTime = video.getYoutubeDLResult().parseExpiryTime();
+        if (videoExpiryTime == null) {
+            return;
+        }
+        Instant videoExpiryInstant = videoExpiryTime.toInstant();
+        Instant now = Instant.now();
+        if (!now.isAfter(videoExpiryInstant)) {
+            LOGGER.info("youtube video previously resolved expires at {}, does not seem to be past.",
+                    videoExpiryTime);
+            return;
+        }
+        LOGGER.info("youtube video previously resolved expires at {}, now is past that will re-resolve...",
+                videoExpiryTime);
+
+        String urlStr = video.getYoutubeDLResult().buildUrlFromId();
+        String youtubeDLExecutable = YoutubeDLUtils.fetchYoutubeDLExecutable();
+        String youtubeDLAdditionalArgs = YoutubeDLUtils.fetchAdditionalArgs();
+
+        final InterruptableAsyncTask<?, ?> asyncProcess;
+        final InterruptableProcessDialog interruptableProcessDialog;
+
+        try {
+            asyncProcess =
+                    YoutubeDL.fetchBestAsyncProcess(youtubeDLExecutable, youtubeDLAdditionalArgs, urlStr,
+                            Collections.singletonList(
+                                    new AsyncTaskListener() {
+                                        public void onSuccess(InterruptableAsyncTask interruptableAsyncTask) {
+                                            if(!interruptableAsyncTask.isInterrupted()) {
+                                                AsyncProcess asyncProcess = (AsyncProcess) interruptableAsyncTask;
+                                                Process process = asyncProcess.getProcess();
+                                                try {
+                                                    YoutubeVideo updated = retrieveYoutubeVideo(process, urlStr);
+                                                    currentTrack.setModel(updated);
+                                                    currentTrack.setLocation(updated.getUrl());
+                                                } catch (YoutubeDLException | IOException e) {
+                                                    LOGGER.error(e.getMessage(), e);
+                                                }
+
+                                            }
+                                        }
+
+                                        public void onFailure(InterruptableAsyncTask interruptableAsyncTask) {
+                                            if(!interruptableAsyncTask.isInterrupted()) {
+                                                handleYoutubeDLFailure("Failed to retrieve media.", null, urlStr);
+                                            }
+                                        }
+                                    }
+                            ));
+            interruptableProcessDialog = new InterruptableProcessDialog(asyncProcess, true);
+
+            asyncProcess.registerListener(new AsyncTaskListener() {
+                public void onSuccess(InterruptableAsyncTask interruptableAsyncTask) {
+                    if (interruptableProcessDialog.isVisible()) {
+                        interruptableProcessDialog.close();
+                    }
+                }
+
+                public void onFailure(InterruptableAsyncTask interruptableAsyncTask) {
+                    if (isYoutubeVideo(urlStr)) {
+                        attemptYoutubeVideoUrlFetch(urlStr);
+                    }
+                    if (interruptableProcessDialog.isVisible()) {
+                        interruptableProcessDialog.close();
+                    }
+                }
+            });
+
+            asyncProcess.execute();
+            interruptableProcessDialog.showDialog();
+        } catch (Exception ex) {
+            handleYoutubeDLFailure(ex.getMessage(), ex, urlStr);
+        }
+
+    }
+
     private String[] loadMediaPlayerOptions() {
         List<String> optionsList = new ArrayList<>();
         for (String key : PropertyManager.getConfigurationMap().keySet()) {
@@ -1103,7 +1213,7 @@ public class HaikuPlayerImpl implements HaikuPlayer {
         return this.currentTrack.getLocation();
     }
 
-    private void log(NowPlayingListData currentTrack) {
+    private void log(PlaylistItem currentTrack) {
         if (currentTrack != null) {
             LOGGER.debug(String.format("Playing item -> name: %s, location: %s, trackId: %s, isMovie: %s", currentTrack.getName(),
                     currentTrack.getLocation(), currentTrack.getTrackId(), currentTrack.isMovie()));
@@ -1125,13 +1235,13 @@ public class HaikuPlayerImpl implements HaikuPlayer {
 
     public void next() {
         if(hasNext()){
-            NowPlayingListData nextTrack = currentTrack;
+            PlaylistItem nextTrack = currentTrack;
             currentTrack = listTraverser.next();
             avoidPlayingSameTrackOnNext(nextTrack, currentTrack);
         }
     }
 
-    private void avoidPlayingSameTrackOnNext(NowPlayingListData nextTrack, NowPlayingListData currentTrack) {
+    private void avoidPlayingSameTrackOnNext(PlaylistItem nextTrack, PlaylistItem currentTrack) {
         if(nextTrack == currentTrack) {
             next();
         } else {
@@ -1164,8 +1274,8 @@ public class HaikuPlayerImpl implements HaikuPlayer {
         EVENT_LISTENERS.add(listener);
     }
 
-    public TraversableLinkedList<NowPlayingListData> getNowPlaylingList() {
-        return nowPlayingList;
+    public TraversableLinkedList<PlaylistItem> getPlaylist() {
+        return playlist;
     }
 
     public boolean isPlaying() {
@@ -1177,11 +1287,11 @@ public class HaikuPlayerImpl implements HaikuPlayer {
     }
 
     public void clearNowPlayingList() {
-        nowPlayingList.clear();
+        playlist.clear();
     }
 
-    private void addTrack(final NowPlayingListData nowPlayingListData) {
-        nowPlayingList.add(nowPlayingListData);
+    private void addTrack(final PlaylistItem playlistItem) {
+        playlist.add(playlistItem);
     }
 
     public MediaPlayer getPlayer() {
@@ -1299,6 +1409,6 @@ public class HaikuPlayerImpl implements HaikuPlayer {
 
     @Override
     public void toggleNowPlayingList() {
-        nowPlayingListFrame.setVisible(!nowPlayingListFrame.isVisible());
+        playlistFrame.setVisible(!playlistFrame.isVisible());
     }
 }

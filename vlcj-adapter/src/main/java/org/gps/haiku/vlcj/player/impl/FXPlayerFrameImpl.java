@@ -1,5 +1,7 @@
 package org.gps.haiku.vlcj.player.impl;
 
+import org.gps.haiku.utils.JavaVersionUtils;
+import org.gps.haiku.utils.OSInfo;
 import org.gps.haiku.vlcj.player.FXPlayerFrame;
 import org.gps.haiku.vlcj.player.VideoPlayerFrame;
 import javafx.application.Platform;
@@ -250,15 +252,18 @@ public class FXPlayerFrameImpl extends VideoPlayerFrame implements FXPlayerFrame
 
     public static void requestOSXFullscreen(Window window) {
         try {
-            enableOSXFullscreen(window);
-            Class appClass = Class.forName("com.apple.eawt.Application");
-            Class params[] = new Class[]{};
+            if (OSInfo.isOSMac() && !JavaVersionUtils.isGreaterThan6()) {
+                enableOSXFullscreen(window);
 
-            Method getApplication = appClass.getMethod("getApplication", params);
-            Object application = getApplication.invoke(appClass);
-            Method requestToggleFulLScreen = application.getClass().getMethod("requestToggleFullScreen", Window.class);
+                Class appClass = Class.forName("com.apple.eawt.Application");
+                Class params[] = new Class[]{};
 
-            requestToggleFulLScreen.invoke(application, window);
+                Method getApplication = appClass.getMethod("getApplication", params);
+                Object application = getApplication.invoke(appClass);
+                Method requestToggleFulLScreen = application.getClass().getMethod("requestToggleFullScreen", Window.class);
+
+                requestToggleFulLScreen.invoke(application, window);
+            }
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
         }

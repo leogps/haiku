@@ -5,7 +5,7 @@
 package org.gps.haiku.vlcj.player.events;
 
 import org.gps.haiku.vlcj.player.HaikuPlayer;
-import org.gps.haiku.vlcj.player.NowPlayingListData;
+import org.gps.haiku.vlcj.player.playlist.PlaylistItem;
 
 /**
  *
@@ -19,7 +19,7 @@ public interface MediaPlayerEventListener {
      * @param player
      * @param currentTrack
      */
-    void playing(final HaikuPlayer player, final NowPlayingListData currentTrack);
+    void playing(final HaikuPlayer player, final PlaylistItem currentTrack);
 
     void paused(final HaikuPlayer player, final String location);
 

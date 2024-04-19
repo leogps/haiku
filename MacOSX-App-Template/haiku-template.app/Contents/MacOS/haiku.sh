@@ -16,7 +16,7 @@ progdir=`dirname "$PRG"`
 
 export JAVACMD=""
 # Iterate through matching JDK 11 installations in /Library/Java/JavaVirtualMachines/
-for jdk_dir in /Library/Java/JavaVirtualMachines/*jdk-11*/Contents/Home; do
+for jdk_dir in /Library/Java/JavaVirtualMachines/*jdk*/Contents/Home; do
   if [ -d "$jdk_dir" ]; then
     echo "Found JDK 11: $jdk_dir"
     JAVACMD="$jdk_dir/bin/java"
@@ -31,7 +31,7 @@ fi
 
 if [ -z "$JAVACMD" ]
 then
-      osascript -e 'display dialog "Java is required to run this. Please install Java 11" buttons {"OK"} default button "OK"'
+      osascript -e 'display dialog "Java is required to run this. Please install Java 11 or higher" buttons {"OK"} default button "OK"'
       exit 1;
 fi
 

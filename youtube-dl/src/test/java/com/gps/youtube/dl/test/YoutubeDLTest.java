@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Date;
 
 /**
  * Created by leogps on 12/17/15.
@@ -28,6 +29,22 @@ public class YoutubeDLTest {
         Assert.assertNotNull(youtubeDLResult);
         Assert.assertNotNull(youtubeDLResult.getUrl());
         System.out.println(youtubeDLResult);
+    }
+
+    @Test
+    public void testURLExpiry() throws InterruptedException, YoutubeDLException, IOException {
+        YoutubeDLResult youtubeDLResult = YoutubeDL.fetchBest(
+                new File("../youtube-dl-exec/youtube-dl").getAbsolutePath(),
+                "--no-check-certificate",
+                "https://www.youtube.com/watch?v=k4YRWT_Aldo");
+
+        Assert.assertNotNull(youtubeDLResult);
+        Assert.assertNotNull(youtubeDLResult.getUrl());
+        System.out.println(youtubeDLResult);
+        Date expiryTime = youtubeDLResult.parseExpiryTime();
+        Assert.assertNotNull(expiryTime);
+        System.out.println(expiryTime);
+        Assert.assertTrue(expiryTime.after(new Date()));
     }
 
     @Test

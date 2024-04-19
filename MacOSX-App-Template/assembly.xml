@@ -7,6 +7,7 @@
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
 
+
     <fileSets>
 
         <!-- Using Mac OSX native app template. -->
@@ -17,8 +18,8 @@
 
         <!-- Using latest LibVLC. -->
         <fileSet>
-            <directory>${project.parent.basedir}/LibVLC/macOs/intel-64_3.0.18</directory>
-            <outputDirectory>/Contents/MacOS/LibVLC/macOs/intel-64_3.0.18</outputDirectory>
+            <directory>${project.parent.basedir}/LibVLC/macOs/${os.arch}</directory>
+            <outputDirectory>/Contents/MacOS/LibVLC/macOs/${os.arch}</outputDirectory>
         </fileSet>
 
         <!-- Using YouTube-DL. -->

@@ -4,6 +4,7 @@ import org.gps.haiku.vlcj.player.events.MediaPlayerEventListener;
 import org.gps.haiku.vlcj.player.impl.TraversableLinkedList;
 import org.gps.haiku.vlcj.player.events.PlayerControlEventListener;
 import org.gps.haiku.vlcj.player.events.PlayerMediaFilesDroppedEventListener;
+import org.gps.haiku.vlcj.player.playlist.PlaylistItem;
 
 import java.io.File;
 import java.net.URL;
@@ -42,7 +43,7 @@ public interface HaikuPlayer extends Runnable {
 
     String getNowPlayingUrl();
 
-    TraversableLinkedList<NowPlayingListData> getNowPlaylingList();
+    TraversableLinkedList<PlaylistItem> getPlaylist();
 
     boolean isPlaying();
 

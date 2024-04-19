@@ -14,7 +14,7 @@ public class TraversableLinkedList<T> {
     private Node<T> firstElement;
     private Node<T> lastElement;
 
-    private ListTraverser<T> listTraverser = new ListTraverser<T>(this);
+    private final ListTraverser<T> listTraverser = new ListTraverser<T>(this);
 
     private final ReentrantReadWriteLock firstElementReadWriteLock = new ReentrantReadWriteLock(true);
     private final ReentrantReadWriteLock lastElementReadWriteLock = new ReentrantReadWriteLock(true);
@@ -35,7 +35,7 @@ public class TraversableLinkedList<T> {
 
                 throw new IllegalStateException("The element states are invalid. Data may be corrupt.");
 
-            } else if (firstElement == null && lastElement == null) {
+            } else if (firstElement == null) {
                 firstElement = lastElement = new Node<T>(t);
             } else {
 
@@ -64,7 +64,7 @@ public class TraversableLinkedList<T> {
         list.lastElementReadWriteLock.writeLock().unlock();
     }
 
-    private void acquireWriteLock(TraversableLinkedList list) {
+    private void acquireWriteLock(TraversableLinkedList<T> list) {
         list.firstElementReadWriteLock.writeLock().lock();
         list.lastElementReadWriteLock.writeLock().lock();
     }

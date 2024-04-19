@@ -24,7 +24,7 @@ public class DbManagerImpl implements DbManager {
 
     String protocol = "jdbc:derby:;";
     private Connection connection;
-    private String dbName = "imp";
+    private String dbName = "haiku_db";
 
     @Override
     public synchronized void initialize() throws SQLException, ClassNotFoundException {
@@ -41,6 +41,7 @@ public class DbManagerImpl implements DbManager {
         }
         System.setProperty("derby.system.home", derbySystemHome);
 
+        LOGGER.debug("Loading derby driver... ");
         Class.forName(org.apache.derby.jdbc.EmbeddedDriver.class.getName());
 
         connection = DriverManager.getConnection(String.format("%sdatabaseName=%s;create=true", protocol, dbName));

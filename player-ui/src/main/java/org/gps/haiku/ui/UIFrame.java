@@ -190,7 +190,7 @@ public class UIFrame extends JFrame {
         });
 
         this.setJMenuBar(uiMenuBar);
-        if (!Main.isVlcjInitSucceeded()) {
+        if (!Haiku.isVlcjInitSucceeded()) {
             uiMenuBar.getOpenMenuItem().setEnabled(false);
             uiMenuBar.getOpenNetworkFileMenuItem().setEnabled(false);
             uiMenuBar.getIncreaseVolumeMenuItem().setEnabled(false);
@@ -469,7 +469,7 @@ public class UIFrame extends JFrame {
         });
 
         uiMenuBar = new UIMenuBar();
-        if (Main.isVlcjInitSucceeded()) {
+        if (Haiku.isVlcjInitSucceeded()) {
             // Setting Menu bar event listener.
             uiMenuBar.getOpenMenuItem().addActionListener(new ActionListener() {
                 @Override
@@ -497,7 +497,7 @@ public class UIFrame extends JFrame {
         uiMenuBar.getIncreaseVolumeMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                Main.getPlayer().handleVolumeIncreasedEvent(Constants.DEFAULT_VOLUME_CHANGE);
+                Haiku.getPlayer().handleVolumeIncreasedEvent(Constants.DEFAULT_VOLUME_CHANGE);
             }
         });
         uiMenuBar.getIncreaseVolumeMenuItem().setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.SHIFT_MASK));
@@ -505,12 +505,12 @@ public class UIFrame extends JFrame {
         uiMenuBar.getDecreaseVolumeMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                Main.getPlayer().handleVolumeDecreasedEvent(Constants.DEFAULT_VOLUME_CHANGE);
+                Haiku.getPlayer().handleVolumeDecreasedEvent(Constants.DEFAULT_VOLUME_CHANGE);
             }
         });
         uiMenuBar.getDecreaseVolumeMenuItem().setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.SHIFT_MASK));
 
-        uiMenuBar.getGoToMenuItem().addActionListener(actionEvent -> Main.getPlayer().handleGoToEvent());
+        uiMenuBar.getGoToMenuItem().addActionListener(actionEvent -> Haiku.getPlayer().handleGoToEvent());
         uiMenuBar.getGoToMenuItem().setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         uiMenuBar.getVlcMenuItem().addActionListener(actionEvent -> {
@@ -698,6 +698,7 @@ public class UIFrame extends JFrame {
     }
 
     private void saveUITheme(UITheme uiTheme) {
+        LOGGER.debug("Saving theme {}", uiTheme);
         ConfigPropertyDao configPropertyDao;
         try {
              configPropertyDao = fetchConfigPropertyDao();
@@ -893,7 +894,7 @@ public class UIFrame extends JFrame {
         fileBrowserTree.registerFileBrowserTreeEventListener(fileNode -> {
             File file = fileNode.getFile();
             if(!file.isDirectory()) {
-                Main.getPlayer().play(file);
+                Haiku.getPlayer().play(file);
             }
         });
     }

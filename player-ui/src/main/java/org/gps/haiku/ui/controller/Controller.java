@@ -2,7 +2,7 @@ package org.gps.haiku.ui.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.gps.haiku.ui.Main;
+import org.gps.haiku.ui.Haiku;
 import org.gps.haiku.ui.UIFrame;
 import org.gps.haiku.ui.exceptions.TaskExecutionException;
 import org.gps.haiku.vlcj.player.HaikuPlayer;
@@ -47,7 +47,7 @@ public class Controller {
     }
 
     public HaikuPlayer getPlayer() {
-        return Main.getPlayer();
+        return Haiku.getPlayer();
     }
 
     public void registerPlayerEventListener() {

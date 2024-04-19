@@ -19,7 +19,7 @@ public class YoutubeDLProcessor extends AsyncProcessImpl {
 
     private InputStream inputStream;
     private InputStream errorStream;
-    private static final int YOUTUBE_DL_RESULT_CHUNK = 3;
+    private static final int YOUTUBE_DL_RESULT_CHUNK = 4;
     private Thread inputStreamThread;
     private Thread errorStreamThread;
     private final List<YoutubeDLResultEventListener> youtubeDLResultEventListeners = new ArrayList<YoutubeDLResultEventListener>();
@@ -50,35 +50,30 @@ public class YoutubeDLProcessor extends AsyncProcessImpl {
     }
 
     public Runnable getInputStreamTask() {
-        return new Runnable() {
-            @Override
-            public void run() {
+        return () -> {
 
-                BufferedReader reader = buildReader(inputStream);
-                String line;
-                int counter = 0;
-
-                String[] resultArray = new String[YOUTUBE_DL_RESULT_CHUNK];
-                try {
-                    while ((line = reader.readLine()) != null) {
-
-                        ++counter;
-                        int index = counter % YOUTUBE_DL_RESULT_CHUNK;
-                        resultArray[index] = line;
-                        if(counter % YOUTUBE_DL_RESULT_CHUNK == 0) {
-                            YoutubeDLResult youtubeDLResult = processResultArrayForSingleResult(resultArray, null);
-                            LOGGER.debug("Fetched Youtube Playlist URL: " + youtubeDLResult);
-                            resultArray = new String[YOUTUBE_DL_RESULT_CHUNK];
-                            YoutubeDLResultEvent youtubeDLResultEvent = new YoutubeDLResultEvent(youtubeDLResult);
-                            informResult(youtubeDLResultEvent);
-                        }
+            BufferedReader reader = buildReader(inputStream);
+            String line;
+            int counter = 0;
+            String[] resultArray = new String[YOUTUBE_DL_RESULT_CHUNK];
+            try {
+                while ((line = reader.readLine()) != null) {
+                    counter++;
+                    int index = (counter - 1)% YOUTUBE_DL_RESULT_CHUNK;
+                    resultArray[index] = line;
+                    if(counter % YOUTUBE_DL_RESULT_CHUNK == 0) {
+                        YoutubeDLResult youtubeDLResult = processResultArrayForSingleResult(resultArray, null);
+                        LOGGER.debug("Fetched Youtube Playlist URL: " + youtubeDLResult);
+                        resultArray = new String[YOUTUBE_DL_RESULT_CHUNK];
+                        YoutubeDLResultEvent youtubeDLResultEvent = new YoutubeDLResultEvent(youtubeDLResult);
+                        informResult(youtubeDLResultEvent);
                     }
-
-                } catch (IOException e) {
-                    LOGGER.error(e.getMessage(), e);
-                } finally {
-                    closeSilently(reader, inputStream);
                 }
+
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+            } finally {
+                closeSilently(reader, inputStream);
             }
         };
     }

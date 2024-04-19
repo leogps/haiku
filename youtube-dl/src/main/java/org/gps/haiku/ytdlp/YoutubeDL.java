@@ -123,15 +123,16 @@ public class YoutubeDL {
             YoutubeDLResult youtubeDLResult = processResultArrayForSingleResult(resultArray, error);
             return youtubeDLResult;
         }
-        return new YoutubeDLResult(null, null, null, error);
+        return new YoutubeDLResult(null, null, null, null, error);
     }
 
     public static YoutubeDLResult processResultArrayForSingleResult(String[] resultArray, String error) {
-        if(resultArray != null && resultArray.length >= 3) {
+        if(resultArray != null && resultArray.length >= 4) {
+            String id = retrieveId(resultArray);
             String title = retrieveTitle(resultArray);
             String url = retrieveURL(resultArray);
             String filename = retrieveFilename(resultArray);
-            return new YoutubeDLResult(title, url, filename, error);
+            return new YoutubeDLResult(id, title, url, filename, error);
         }
         return null;
     }
@@ -217,8 +218,10 @@ public class YoutubeDL {
                 youtubeDlExecutable,
                 additionalArgs,
                 "--get-title",
+                "--get-id",
                 "--get-url",
                 "--get-filename",
+                "--no-warnings",
                 "-f",
                 format,
                 input
@@ -226,8 +229,15 @@ public class YoutubeDL {
     }
 
     private static String retrieveFilename(String[] resultArray) {
-        if(resultArray != null && resultArray.length >= 2 && resultArray[2] != null) {
+        if(resultArray != null && resultArray.length >= 3 && resultArray[3] != null) {
             return resultArray[2];
+        }
+        return null;
+    }
+
+    private static String retrieveId(String[] resultArray) {
+        if(resultArray != null && resultArray.length >= 2 && resultArray[2] != null) {
+            return resultArray[1];
         }
         return null;
     }
