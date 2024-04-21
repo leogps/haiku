@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by leogps on 12/08/2018.
@@ -22,7 +23,8 @@ public class ConfigPropertyDaoTest {
     @BeforeClass
     public void init() throws SQLException, ClassNotFoundException {
         dbManager = DbManagerImpl.getInstance();
-        dbManager.initialize();
+        String dbName = "haiku_db_" + UUID.randomUUID().toString();
+        dbManager.initialize(dbName);
     }
 
     @Test

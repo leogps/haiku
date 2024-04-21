@@ -24,10 +24,15 @@ public class DbManagerImpl implements DbManager {
 
     String protocol = "jdbc:derby:;";
     private Connection connection;
-    private String dbName = "haiku_db";
+    private static final String DEFAULT_DB_NAME = "haiku_db";
 
     @Override
     public synchronized void initialize() throws SQLException, ClassNotFoundException {
+        initialize(DEFAULT_DB_NAME);
+    }
+
+    @Override
+    public synchronized void initialize(String dbName) throws SQLException, ClassNotFoundException {
         String derbySystemHome = PropertyManager.getProperty("derby.system.home");
         if(derbySystemHome == null) {
             derbySystemHome = System.getProperty("user.home") + File.separator + ".haiku";

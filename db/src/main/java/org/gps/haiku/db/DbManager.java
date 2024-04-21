@@ -10,6 +10,8 @@ public interface DbManager {
 
     void initialize() throws SQLException, ClassNotFoundException;
 
+    void initialize(String dbName) throws SQLException, ClassNotFoundException;
+
     boolean isInitiated();
 
     void shutdown() throws SQLException;

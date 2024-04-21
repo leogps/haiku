@@ -119,7 +119,7 @@
                   <filtering>true</filtering>
                 </resource>
               </resources>
-              <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
+              <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
               <overwrite>true</overwrite>
 
             </configuration>
@@ -156,7 +156,8 @@
             <configuration>
               <target>
                 <path id="j2sp">
-                  <pathelement location="${project.basedir}/src/main/java"/>
+                    <pathelement location="${project.basedir}/src/main/java"/>
+                    <pathelement location="${project.build.directory}/generated-sources"/>
                 </path>
                 <fileset id="ideaLib" dir="${project.build.directory}/lib">
                   <include name="**/*.jar"/>
