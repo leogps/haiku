@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PropertyManager {
 
@@ -20,6 +22,8 @@ public class PropertyManager {
     private static final Map<String, String> CONFIGURATION_MAP = new HashMap<>();
 
     public static final String OS_SPECIFIC_PROPERTIES_FILE_POINTER = String.format("haiku.%s.properties.file", OSInfo.getOsPrefix());
+
+    private static final Pattern WIN_ABS_PATH_PATTERN = Pattern.compile("^[a-zA-Z]:(.*)$");
 
     public static Map<String, String> getConfigurationMap() {
         return CONFIGURATION_MAP;
@@ -70,7 +74,7 @@ public class PropertyManager {
         }
 
         LOGGER.debug("Checking if the config file location is relative path or absolute path...");
-        if(!propertiesFilePath.startsWith(File.separator)) {
+        if(isRelativePath(propertiesFilePath)) {
             propertiesFilePath = new File("").getAbsolutePath() + File.separator + propertiesFilePath;
         }
 
@@ -103,6 +107,14 @@ public class PropertyManager {
 
             LOGGER.info("Asserting the information is passed through System.Properties.");
         }
+    }
+
+    public static boolean isRelativePath(String propertiesFilePath) {
+        if (!OSInfo.isOSWin()) {
+            return !propertiesFilePath.startsWith(File.separator);
+        }
+        final Matcher matcher = WIN_ABS_PATH_PATTERN.matcher(propertiesFilePath);
+        return !matcher.matches();
     }
 
     private static String getDefaultConfigLocation() {
