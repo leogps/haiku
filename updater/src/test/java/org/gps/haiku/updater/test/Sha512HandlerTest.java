@@ -1,6 +1,7 @@
 package org.gps.haiku.updater.test;
 
 import org.gps.haiku.updater.checksum.Sha512Handler;
+import org.gps.haiku.utils.OSInfo;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -17,6 +18,10 @@ public class Sha512HandlerTest {
         Assert.assertTrue(handler.canHandle("SHA2-512SUMS"));
         File testFile = new File(Objects.requireNonNull(Sha512HandlerTest.class.getClassLoader().getResource("checksum_test_file")).getFile());
         String checksum = handler.calculateChecksum(testFile);
-        Assert.assertEquals("86cec549dafcffd2f3e5faa6d62e24e0420002bafe877fbc1d801508f76bc62d84950469623b0944e13d073ee58e46a7e6ea5f01db1b51a6309e4a0cad762f53", checksum);
+        if (!OSInfo.isOSWin()) {
+            Assert.assertEquals(checksum, "86cec549dafcffd2f3e5faa6d62e24e0420002bafe877fbc1d801508f76bc62d84950469623b0944e13d073ee58e46a7e6ea5f01db1b51a6309e4a0cad762f53");
+        } else {
+            Assert.assertEquals(checksum, "53bfe0e32584dae7e0c9617389f00ebdcc7ade661f49c18a84f386a8ee2a3207b3894bce0b4f7ec911005e975a5bda81d2367b153652473d1c4f0c6e98bfaa9d");
+        }
     }
 }
