@@ -10,35 +10,170 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>archiver</artifactId>
-  <description>Archives the project as Mac OSX native App using the app template.</description>
+  <description>Archives the project as native apps/installers.</description>
 
-  <build>
-    <plugins>
+  <properties>
+    <jpackage.windows.path>${java.home}/bin/jpackage.exe</jpackage.windows.path>
+  </properties>
 
-      <!-- Building MacOSX native App using the template. -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.6.0</version>
-        <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
-          <descriptors>
-            <descriptor>${project.parent.basedir}/MacOSX-App-Template/assembly.xml</descriptor>
-          </descriptors>
-          <finalName>haiku.app</finalName>
-          <outputDirectory>${project.basedir}/target/${os.name}-${os.version}-${os.arch}/
-          </outputDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+  <profiles>
+    <!-- Windows Profile -->
+    <profile>
+      <id>build-installer-on-windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+        <property>
+          <name>buildInstaller</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <!-- Building WinOs native app using jpackage/wix. -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <!-- windows-amd64-component-gather -->
+              <execution>
+                <id>windows-amd64-component-gather</id>
+                <phase>package</phase>
+                <configuration>
+                  <target>
+                    <mkdir dir="${project.build.directory}/jpackage-amd64"/>
+                    <copy file="${project.basedir}/../player-ui/target/haiku-jar-with-dependencies.jar"
+                          tofile="${project.build.directory}/jpackage-amd64/haiku.jar"
+                          overwrite="true"/>
+                    <copy file="${project.basedir}/../youtube-dl-exec/youtube-dl.exe"
+                          tofile="${project.build.directory}/jpackage-amd64/youtube-dl.exe"
+                          overwrite="true"/>
+                    <mkdir dir="${project.build.directory}/jpackage-amd64/config"/>
+                    <copy file="${project.basedir}/config/win-app.properties"
+                          tofile="${project.build.directory}/jpackage-amd64/config/win-app.properties"
+                          overwrite="true"/>
+                    <mkdir dir="${project.build.directory}/jpackage-amd64/winOs/amd64"/>
+                    <copy todir="${project.build.directory}/jpackage-amd64/winOs/amd64"
+                          overwrite="true">
+                      <fileset dir="${project.basedir}/../LibVLC/winOs/amd64"/>
+                    </copy>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>windows-amd64-installer</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>${jpackage.windows.path}</executable>
+                  <workingDirectory>${project.build.directory}/jpackage-amd64</workingDirectory>
+                  <arguments>
+                    <!-- type -->
+                    <argument>--type</argument>
+                    <argument>"exe"</argument>
+                    <!-- app version -->
+                    <argument>--app-version</argument>
+                    <argument>${project.version}</argument>
+                    <!-- name -->
+                    <argument>--name</argument>
+                    <argument>haiku</argument>
+                    <!-- destination -->
+                    <argument>--dest</argument>
+                    <argument>${project.build.directory}/haiku-amd64-installer</argument>
+                    <!-- temp folder -->
+                    <argument>--temp</argument>
+                    <argument>${project.build.directory}/jpackage-amd64-temp</argument>
+                    <!-- verbose -->
+                    <argument>--verbose</argument>
+                    <!-- input -->
+                    <argument>--input</argument>
+                    <argument>${project.build.directory}/jpackage-amd64</argument>
+                    <!-- icon -->
+                    <argument>--icon</argument>
+                    <argument>${project.basedir}/src/main/resources/haiku.ico</argument>
+                    <!-- main-jar (relative-path) -->
+                    <argument>--main-jar</argument>
+                    <argument>haiku.jar</argument>
+                    <!-- about-url -->
+                    <argument>--about-url</argument>
+                    <argument>https://github.com/leogps/haiku</argument>
+                    <!-- license-file -->
+                    <argument>--license-file</argument>
+                    <argument>${project.basedir}/../LICENSE</argument>
+                    <!-- win-menu -->
+                    <argument>--win-menu</argument>
+                    <!-- win-help-url -->
+                    <argument>--win-help-url</argument>
+                    <argument>https://github.com/leogps/haiku</argument>
+                    <!-- win-shortcut -->
+                    <argument>--win-shortcut</argument>
+                    <!-- win-shortcut-prompt -->
+                    <argument>--win-shortcut-prompt</argument>
+                    <!-- win-update-url -->
+                    <argument>--win-update-url</argument>
+                    <argument>https://github.com/leogps/haiku/releases</argument>
+                    <!-- win-upgrade-uuid -->
+                    <argument>--win-upgrade-uuid</argument>
+                    <argument>9d537a3b-5bef-4145-8949-e7c921421a91</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- MacOS Profile -->
+    <profile>
+      <id>build-macos-app-on-macos</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <!-- Building MacOSX native App using the template. -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.6.0</version>
+            <configuration>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>${project.parent.basedir}/MacOSX-App-Template/assembly.xml</descriptor>
+              </descriptors>
+              <finalName>haiku.app</finalName>
+              <outputDirectory>${project.basedir}/target/${os.name}-${os.version}-${os.arch}/
+              </outputDirectory>
+            </configuration>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
