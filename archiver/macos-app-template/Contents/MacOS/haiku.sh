@@ -18,7 +18,7 @@ export JAVACMD=""
 # Iterate through matching JDK 11 installations in /Library/Java/JavaVirtualMachines/
 for jdk_dir in /Library/Java/JavaVirtualMachines/*jdk*/Contents/Home; do
   if [ -d "$jdk_dir" ]; then
-    echo "Found JDK 11: $jdk_dir"
+    echo "Found JDK: $jdk_dir"
     JAVACMD="$jdk_dir/bin/java"
     break  # Exit the loop once a JDK is found
   fi
@@ -54,7 +54,7 @@ echo "$progdir"
 exec "$JAVACMD" -Duser.dir="$progdir" \
      -Dfile.encoding=UTF-8 \
      -Duser.dir="$progdir" \
-     -jar "$progdir/../Java/haiku-jar-with-dependencies.jar" \
+     -jar "$progdir/../Java/haiku.jar" \
       "-Dapple.laf.useScreenMenuBar=true" \
       "-Dcom.apple.mrj.application.growbox.intrudes=true" \
       "-Dapple.awt.antialiasing=true" \

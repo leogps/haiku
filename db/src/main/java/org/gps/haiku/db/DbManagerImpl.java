@@ -47,7 +47,7 @@ public class DbManagerImpl implements DbManager {
         System.setProperty("derby.system.home", derbySystemHome);
 
         LOGGER.debug("Loading derby driver... ");
-        Class.forName(org.apache.derby.jdbc.EmbeddedDriver.class.getName());
+        Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 
         connection = DriverManager.getConnection(String.format("%sdatabaseName=%s;create=true", protocol, dbName));
         createTableIfNotExists(DBTable.CONFIG_PROPERTY);

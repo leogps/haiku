@@ -128,8 +128,7 @@ public class VideoPlayerKeyListener extends PlayerKeyEventListener {
         /**
          * App Exit.
          */
-        if (!OSInfo.isOSMac() // For MacOS, we handle this differently.
-                && (keyEvent.getKeyCode() == KeyEvent.VK_Q
+        if ((keyEvent.getKeyCode() == KeyEvent.VK_Q
                 && (((keyEvent.getModifiers() & KeyEvent.CTRL_MASK) != 0) || (keyEvent.getModifiers() & KeyEvent.VK_META) != 0))) {
             ApplicationExitHandler.handle(videoPlayerFrame);
         }

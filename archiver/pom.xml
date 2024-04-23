@@ -14,6 +14,7 @@
 
   <properties>
     <jpackage.windows.path>${java.home}/bin/jpackage.exe</jpackage.windows.path>
+    <macos.app.dir.name>haiku-macos-${os.arch}.app</macos.app.dir.name>
   </properties>
 
   <profiles>
@@ -84,7 +85,7 @@
                   <arguments>
                     <!-- type -->
                     <argument>--type</argument>
-                    <argument>"exe"</argument>
+                    <argument>exe</argument>
                     <!-- app version -->
                     <argument>--app-version</argument>
                     <argument>${project.version}</argument>
@@ -145,28 +146,62 @@
         <os>
           <family>mac</family>
         </os>
+        <property>
+          <name>buildInstaller</name>
+          <value>true</value>
+        </property>
       </activation>
       <build>
         <plugins>
-          <!-- Building MacOSX native App using the template. -->
+          <!-- Building MacOS native App using the template. -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>3.6.0</version>
-            <configuration>
-              <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>${project.parent.basedir}/MacOSX-App-Template/assembly.xml</descriptor>
-              </descriptors>
-              <finalName>haiku.app</finalName>
-              <outputDirectory>${project.basedir}/target/${os.name}-${os.version}-${os.arch}/
-              </outputDirectory>
-            </configuration>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.1.0</version>
             <executions>
+              <!-- macos-app-build -->
               <execution>
+                <id>macos-app-build</id>
                 <phase>package</phase>
+                <configuration>
+                  <target>
+                    <mkdir dir="${project.build.directory}/${macos.app.dir.name}"/>
+                    <copy todir="${project.build.directory}/${macos.app.dir.name}"
+                          overwrite="true">
+                      <fileset dir="${project.basedir}/macos-app-template"/>
+                    </copy>
+                    <chmod file="${project.build.directory}/${macos.app.dir.name}/Contents/MacOS/haiku.sh"
+                           perm="ugo+rx"/>
+
+                    <!-- Using latest LibVLC. -->
+                    <copy todir="${project.build.directory}/${macos.app.dir.name}/Contents/MacOS/LibVLC/macOs/${os.arch}"
+                          overwrite="true">
+                      <fileset dir="${project.basedir}/../LibVLC/macOs/${os.arch}"/>
+                    </copy>
+
+                    <!-- Using YouTube-DL. -->
+                    <copy todir="${project.build.directory}/${macos.app.dir.name}/Contents/MacOS/youtube-dl-exec"
+                          overwrite="true">
+                      <fileset dir="${project.basedir}/../youtube-dl-exec"/>
+                    </copy>
+                    <chmod file="${project.build.directory}/${macos.app.dir.name}/Contents/MacOS/youtube-dl-exec/youtube-dl"
+                           perm="ugo+rx"/>
+
+                    <!-- Using config. -->
+                    <mkdir dir="${project.build.directory}/${macos.app.dir.name}/Contents/MacOs/config"/>
+                    <copy file="${project.basedir}/config/mac-app.properties"
+                          tofile="${project.build.directory}/${macos.app.dir.name}/Contents/MacOS/config/mac-app.properties"
+                          overwrite="true"/>
+
+                    <!-- main-jar -->
+                    <mkdir dir="${project.build.directory}/${macos.app.dir.name}/Contents/Java"/>
+                    <copy file="${project.basedir}/../player-ui/target/haiku-jar-with-dependencies.jar"
+                          tofile="${project.build.directory}/${macos.app.dir.name}/Contents/Java/haiku.jar"
+                          overwrite="true"/>
+                  </target>
+                </configuration>
                 <goals>
-                  <goal>single</goal>
+                  <goal>run</goal>
                 </goals>
               </execution>
             </executions>

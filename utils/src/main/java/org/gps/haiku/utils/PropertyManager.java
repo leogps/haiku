@@ -122,7 +122,7 @@ public class PropertyManager {
             return Property.WIN_PROPERTIES_FILE_PROPERTY.getDefaultValue();
         }
         if(OSInfo.isOSMac()){
-            return File.separator + Property.MAC_PROPERTIES_FILE_PROPERTY.getDefaultValue();
+            return Property.MAC_PROPERTIES_FILE_PROPERTY.getDefaultValue();
         }
         return Property.NIX_PROPERTIES_FILE_PROPERTY.getDefaultValue();
     }

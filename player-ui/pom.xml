@@ -148,10 +148,12 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>3.1.0</version>
         <executions>
           <execution>
+            <id>player-ui-with-forms-compilation</id>
             <phase>prepare-package</phase>
             <configuration>
               <target>
@@ -182,84 +184,26 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>3.1.0</version>
         <executions>
           <execution>
-            <id>copy-archive-debian</id>
+            <id>delete-folder</id>
             <phase>package</phase>
-            <configuration>
-              <target name="copy libs and classes into archive.debian project">
-                <delete failonerror="false">
-                  <fileset dir="../archiver/debian/haiku/usr/lib/haiku-player/lib">
-                    <include name="*.jar" />
-                  </fileset>
-                </delete>
-                <delete dir="../archiver/debian/haiku/usr/lib/haiku-player/classes" failonerror="false"/>
-                <delete failonerror="false">
-                  <fileset dir="../archiver/debian/haiku/usr/lib/haiku-player">
-                    <include name="youtube-dl"/>
-                  </fileset>
-                </delete>
-
-                <copy todir="../archiver/debian/haiku/usr/lib/haiku-player/lib"
-                  overwrite="true">
-                  <fileset dir="${project.build.directory}/lib">
-                    <exclude name="db-${project.version}.jar"/>
-                    <exclude name="utils-${project.version}.jar"/>
-                    <exclude name="updater-${project.version}.jar"/>
-                    <exclude name="youtube-dl-${project.version}.jar"/>
-                    <exclude name="vlcj-adapter-${project.version}.jar"/>
-                    <exclude name="macos-utils-${project.version}.jar"/>
-                  </fileset>
-                </copy>
-                <copy todir="../archiver/debian/haiku/usr/lib/haiku-player/classes"
-                  overwrite="true">
-                  <fileset dir="../db/target/classes"/>
-                  <fileset dir="../utils/target/classes"/>
-                  <fileset dir="../updater/target/classes"/>
-                  <fileset dir="../youtube-dl/target/classes"/>
-                  <fileset dir="../vlcj-adapter/target/classes"/>
-                  <fileset dir="../macos-utils/target/classes"/>
-                  <fileset dir="${project.build.directory}/classes"/>
-                </copy>
-                <copy file="../youtube-dl-exec/${youtube-dl.executable}"
-                  tofile="../archiver/debian/haiku/usr/lib/haiku-player/${youtube-dl.executable}"
-                  overwrite="true"/>
-              </target>
-            </configuration>
             <goals>
               <goal>run</goal>
             </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <id>delete-folder</id>
-            <phase>install</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
             <configuration>
-              <executable>${project.basedir}/build-src-cleanup${script.extension}</executable>
-              <workingDirectory>${project.basedir}</workingDirectory>
-              <arguments>
-                <argument>${project.build.sourceDirectory}/org/gps/haiku/utils</argument>
-                <argument>${project.build.sourceDirectory}/org/gps/haiku/vlcj</argument>
-              </arguments>
+              <target>
+                <delete dir="${project.build.directory}/generated-sources/org"
+                        includeemptydirs="true"/>
+              </target>
             </configuration>
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
