@@ -3,6 +3,8 @@ package org.gps.haiku.utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import static org.gps.haiku.utils.PropertyManager.resolveAppCurrentWorkingDirectory;
+
 /**
  * Created by leogps on 10/3/15.
  */
@@ -25,7 +27,7 @@ public class FileUtils {
         }
         String prefix = "";
         if(checkToAddPrefix(filePath)) {
-            prefix = new File("").getAbsolutePath();
+            prefix = resolveAppCurrentWorkingDirectory();
         }
         String fullFilePath = String.format("%s%s%s", prefix, File.separator, filePath);
         File file = new File(fullFilePath);

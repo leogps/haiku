@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import uk.co.caprica.vlcj.binding.lib.LibVlc;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 
-import java.io.File;
+import static org.gps.haiku.utils.PropertyManager.buildFullPathFromRelativePath;
 
 public class VLCJUtils {
 
@@ -27,16 +27,15 @@ public class VLCJUtils {
         LOGGER.info("VlcPathProperty: {}", vlcPathProperty);
         LOGGER.info("VlcPluginsPathProperty: {}", vlcPluginsPathProperty);
 
-        String currentFolderPath = new File("").getAbsolutePath();
         String vlcPath = PropertyManager.getProperty(vlcPathProperty);
         if (PropertyManager.isRelativePath(vlcPath)) {
-            vlcPath = String.join(File.separator, currentFolderPath, vlcPath);
+            vlcPath = buildFullPathFromRelativePath(vlcPath);
         }
         LOGGER.info("VlcPath: {}", vlcPath);
 
         String vlcPluginsPath = PropertyManager.getProperty(vlcPluginsPathProperty);
         if (PropertyManager.isRelativePath(vlcPluginsPath)) {
-            vlcPluginsPath = String.join(File.separator, currentFolderPath, vlcPluginsPath);
+            vlcPluginsPath = buildFullPathFromRelativePath(vlcPluginsPath);
         }
         LOGGER.info("VlcPluginsPath: {}", vlcPluginsPath);
 

@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>haiku.sh</string>
+	<string>haiku</string>
 	<key>CFBundleGetInfoString</key>
 	<string>haiku player application</string>
 	<key>CFBundleIconFile</key>
@@ -13,13 +13,13 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>1.0</string>
 	<key>CFBundleName</key>
-	<string>haiku.sh</string>
+	<string>Haiku</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>3.0.1</string>
+	<string>1.0.59</string>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -2432,6 +2432,6 @@
 		</dict>
 	</array>
 	<key>CFBundleGetInfoString - 2</key>
-	<string>Copyright © 2018 leogps</string>
+	<string>Copyright © 2024 leogps</string>
 </dict>
 </plist>

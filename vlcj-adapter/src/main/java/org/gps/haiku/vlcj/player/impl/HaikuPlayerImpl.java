@@ -149,6 +149,8 @@ public class HaikuPlayerImpl implements HaikuPlayer {
 
     private final AtomicBoolean manualVolumeChange = new AtomicBoolean(false);
 
+    private static final AtomicInteger PLAYER_THREAD_POOL_NUM = new AtomicInteger(0);
+
     private final FileBrowserDialogListener mediaFileOpenEventListener = new FileBrowserDialogListener() {
         public void onFileSelected(File selectedFile) {
             if (selectedFile != null) {
@@ -642,7 +644,9 @@ public class HaikuPlayerImpl implements HaikuPlayer {
 
     public void play() {
         this.stopPlay();
-        new Thread(this).start();
+        Thread t = new Thread(this);
+        t.setName(String.format("haiku-player-%s", PLAYER_THREAD_POOL_NUM.getAndIncrement()));
+        t.start();
     }
 
     public void playFiles(final List<File> files) {

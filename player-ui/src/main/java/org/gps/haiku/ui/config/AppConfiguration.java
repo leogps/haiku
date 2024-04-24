@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import static org.gps.haiku.utils.PropertyManager.OS_SPECIFIC_PROPERTIES_FILE_POINTER;
+import static org.gps.haiku.utils.PropertyManager.*;
 
 /**
  * Created by leogps on 12/26/16.
@@ -55,14 +55,23 @@ public class AppConfiguration {
     }
 
     private String checkEnvironment() {
-        if (!System.getenv().containsKey(PropertyManager.OS_SPECIFIC_PROPERTIES_FILE_POINTER)) {
+        String propertyFileLocation = lookupConfiguredApplicationProperty(OS_SPECIFIC_PROPERTIES_FILE_POINTER);
+        if (propertyFileLocation == null) {
             return null;
         }
-        String propertyFileLocation = System.getenv().get(PropertyManager.OS_SPECIFIC_PROPERTIES_FILE_POINTER);
-        File propertyFile = new File(propertyFileLocation);
+        LOGGER.info("Found env/sys property: {}", propertyFileLocation);
+
+        File propertyFile;
+        if (isRelativePath(propertyFileLocation)) {
+            propertyFile = new File(buildFullPathFromRelativePath(propertyFileLocation));
+        } else {
+            propertyFile = new File(propertyFileLocation);
+        }
         if (!propertyFile.exists() || !propertyFile.isFile()) {
+            LOGGER.warn("Property file missing: {}", propertyFileLocation);
             return null;
         }
+        LOGGER.warn("Property file found: {}", propertyFileLocation);
         return propertyFile.getAbsolutePath();
     }
 }

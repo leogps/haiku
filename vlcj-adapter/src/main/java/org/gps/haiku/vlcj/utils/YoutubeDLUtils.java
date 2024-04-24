@@ -3,8 +3,9 @@ package org.gps.haiku.vlcj.utils;
 import org.gps.haiku.utils.OSInfo;
 import org.gps.haiku.utils.PropertyManager;
 
-import java.io.File;
 import java.util.Objects;
+
+import static org.gps.haiku.utils.PropertyManager.buildFullPathFromRelativePath;
 
 /**
  * Created by leogps on 2/25/17.
@@ -16,14 +17,13 @@ public class YoutubeDLUtils {
         if (youtubeDLAbsolutePath != null) {
             return youtubeDLAbsolutePath;
         }
-        String currentFolderPath = new File("").getAbsolutePath();
         String youtubeDLExecutablePath = PropertyManager.getProperty("youtube-dl-executable");
         if (youtubeDLExecutablePath == null) {
-            return String.join(File.separator, currentFolderPath, OSInfo.isOSWin()
-                    ? "youtubedl.exe" : "youtubedl");
+            String youtubeDLExecutableName = OSInfo.isOSWin() ? "youtubedl.exe" : "youtubedl";
+            return buildFullPathFromRelativePath(youtubeDLExecutableName);
         }
         if (PropertyManager.isRelativePath(youtubeDLExecutablePath)) {
-            return String.join(File.separator, currentFolderPath, youtubeDLExecutablePath);
+            return buildFullPathFromRelativePath(youtubeDLExecutablePath);
         }
         return youtubeDLExecutablePath;
     }

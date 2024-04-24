@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,11 +18,28 @@ public class PropertyManager {
 
     private static final Logger LOGGER = LogManager.getLogger(PropertyManager.class);
 
+    static {
+        try {
+            LOGGER.info("Dumping env properties...");
+            for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+                LOGGER.debug("\t{}-->{}", entry.getKey(), entry.getValue());
+            }
+            LOGGER.info("Dumping sys properties...");
+            for (Map.Entry<?, ?> entry : System.getProperties().entrySet()) {
+                LOGGER.debug("\t{}-->{}", entry.getKey(), entry.getValue());
+            }
+        } catch (Exception ignored) {}
+    }
+
     private static final Map<String, String> OVERRIDABLE_PROPERTIES = new HashMap<>();
 
     private static final Map<String, String> CONFIGURATION_MAP = new HashMap<>();
 
     public static final String OS_SPECIFIC_PROPERTIES_FILE_POINTER = String.format("haiku.%s.properties.file", OSInfo.getOsPrefix());
+
+    public static final String LOG4J_CONFIG_LOCATION = "haiku.log4j.config.file";
+
+    public static final String CURRENT_WORKING_DIRECTORY_POINTER = "haiku.cwd.path";
 
     private static final Pattern WIN_ABS_PATH_PATTERN = Pattern.compile("^[a-zA-Z]:(.*)$");
 
@@ -75,11 +93,11 @@ public class PropertyManager {
 
         LOGGER.debug("Checking if the config file location is relative path or absolute path...");
         if(isRelativePath(propertiesFilePath)) {
-            propertiesFilePath = new File("").getAbsolutePath() + File.separator + propertiesFilePath;
+            propertiesFilePath = buildFullPathFromRelativePath(propertiesFilePath);
         }
 
         if(FileUtils.checkFileExistence(propertiesFilePath)) {
-            LOGGER.info("Properties file found: " + propertiesFilePath);
+            LOGGER.info("Properties file found: {}", propertiesFilePath);
 
             try {
 
@@ -109,6 +127,10 @@ public class PropertyManager {
         }
     }
 
+    /**
+     * Checks if the given path is a relative path or absolute path.
+     *
+     */
     public static boolean isRelativePath(String propertiesFilePath) {
         if (!OSInfo.isOSWin()) {
             return !propertiesFilePath.startsWith(File.separator);
@@ -133,5 +155,52 @@ public class PropertyManager {
 
     public static boolean containsProperty(String key) {
         return CONFIGURATION_MAP.containsKey(key);
+    }
+
+    /**
+     * Looks up for configured property in env and system property maps.
+     * SYS has the highest precedence.
+     * ENV has next highest precedence.
+     *
+     */
+    public static String lookupConfiguredApplicationProperty(String key) {
+        boolean hasEnvProperty = hasEnvironmentProperty(key);
+        boolean hasSysProperty = hasSystemProperty(key);
+        if (!hasEnvProperty && !hasSysProperty) {
+            return null;
+        }
+        if (hasSysProperty) {
+            return System.getProperty(key);
+        }
+        return System.getenv().get(key);
+    }
+
+    /**
+     * Checks if an ENV property exists for the key
+     *
+     */
+    public static boolean hasEnvironmentProperty(String key) {
+        return System.getenv().containsKey(key);
+    }
+
+    /**
+     * Checks if a system property exists for the key.
+     *
+     */
+    public static boolean hasSystemProperty(String key) {
+        return System.getProperties().containsKey(key);
+    }
+
+    /**
+     * Resolves App Current Working Directory by checking for explicitly configured property.
+     * If not found falls-back to "".absolutePath.
+     */
+    public static String resolveAppCurrentWorkingDirectory() {
+        String resolveConfiguredCWD = lookupConfiguredApplicationProperty(CURRENT_WORKING_DIRECTORY_POINTER);
+        return Objects.requireNonNullElseGet(resolveConfiguredCWD, () -> new File("").getAbsolutePath());
+    }
+
+    public static String buildFullPathFromRelativePath(String relativePath) {
+        return String.join(File.separator, resolveAppCurrentWorkingDirectory(), relativePath);
     }
 }

@@ -2,6 +2,7 @@ package org.gps.haiku.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.formdev.flatlaf.FlatLightLaf;
+import lombok.Getter;
 import org.gps.haiku.db.ConfigPropertyDao;
 import org.gps.haiku.db.DbManager;
 import org.gps.haiku.db.DbManagerImpl;
@@ -11,6 +12,7 @@ import org.gps.haiku.ui.controller.Controller;
 import org.gps.haiku.ui.theme.UITheme;
 import org.gps.haiku.utils.JavaVersionUtils;
 import org.gps.haiku.utils.PropertyManager;
+import org.gps.haiku.utils.log.LogUtils;
 import org.gps.haiku.utils.ui.ApplicationExitHandler;
 import org.gps.haiku.vlcj.player.events.UIDropTarget;
 import org.gps.haiku.ui.events.UIFrameEventListener;
@@ -41,22 +43,28 @@ import java.util.logging.Level;
  */
 public class Haiku {
 
-    private static final Logger LOGGER = LogManager.getLogger(Haiku.class);
-
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("ui");
     private static final java.util.logging.Logger BASIC_LOGGER
             = java.util.logging.Logger.getLogger(Haiku.class.getName());
 
-    private static boolean vlcjInitSucceeded = false;
-
-    public static boolean isVlcjInitSucceeded() {
-        return vlcjInitSucceeded;
+    static {
+        try {
+            LogUtils.checkAndInitLog4J();
+        } catch (IOException e) {
+            BASIC_LOGGER.log(Level.WARNING, "Error initializing log4j", e);
+        }
     }
+
+    private static final Logger LOGGER = LogManager.getLogger(Haiku.class);
+
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("ui");
+
+    @Getter
+    private static boolean vlcjInitSucceeded = false;
 
     private static HaikuPlayer haikuPlayer;
     private static final AppConfiguration appConfiguration = new AppConfiguration();
 
-    private static DbManager dbManager = DbManagerImpl.getInstance();
+    private static final DbManager DB_MANAGER = DbManagerImpl.getInstance();
 
     public static void main(String[] args) {
         if(args != null && args.length > 0) {
@@ -69,7 +77,7 @@ public class Haiku {
         appConfiguration.configure();
 
         try {
-            dbManager.initialize();
+            DB_MANAGER.initialize();
         } catch (Exception e) {
             LOGGER.warn("Failed to initialize DB.", e);
         }
@@ -78,7 +86,7 @@ public class Haiku {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             LOGGER.info("Shut down initiated...");
             try {
-                dbManager.shutdown();
+                DB_MANAGER.shutdown();
             } catch (SQLException e) {
                 BASIC_LOGGER.log(Level.INFO, e.getMessage());
             }
@@ -139,9 +147,8 @@ public class Haiku {
 
                 splashAnimator.renderSplashFrame(20, "Logging properties...");
                 LOGGER.debug("Dumping properties read: ");
-                for(Object keyObj : configurationMap.keySet()) {
-                    String key = (String) keyObj;
-                    LOGGER.debug(key + ": " + configurationMap.get(key));
+                for(String keyObj : configurationMap.keySet()) {
+                    LOGGER.debug("{}: {}", keyObj, configurationMap.get(keyObj));
                 }
 
                 splashAnimator.renderSplashFrame(20, "Initializing UI Frames...");
@@ -241,10 +248,7 @@ public class Haiku {
                             }
                         });
 
-                    } catch(Exception ex) {
-                        vlcjInitSucceeded = false;
-                        LOGGER.error("MediaPlayer Initialization failed.", ex);
-                    } catch(Error ex) {
+                    } catch(Exception | Error ex) {
                         vlcjInitSucceeded = false;
                         LOGGER.error("MediaPlayer Initialization failed.", ex);
                     }
@@ -279,11 +283,7 @@ public class Haiku {
                 controller.takeControl();
 
                 splashAnimator.renderSplashFrame(95, "Showing UI...");
-                if(!isVlcjInitSucceeded()) {
-                    uiFrame.getPlayerControlPanel().setVisible(false);
-                } else {
-                    uiFrame.getPlayerControlPanel().setVisible(true);
-                }
+                uiFrame.getPlayerControlPanel().setVisible(isVlcjInitSucceeded());
 
                 splashAnimator.renderSplashFrame(100, "Done.");
                 splashAnimator.close();
@@ -351,11 +351,11 @@ public class Haiku {
     }
 
     private static Integer retrieveFontSize() {
-        if(!dbManager.isInitiated()) {
+        if(!DB_MANAGER.isInitiated()) {
             return null;
         }
         try {
-            ConfigPropertyDao configPropertyDao = new ConfigPropertyDao(dbManager.getConnection());
+            ConfigPropertyDao configPropertyDao = new ConfigPropertyDao(DB_MANAGER.getConnection());
             ConfigProperty configProperty = configPropertyDao.findByKey("font_size");
             if(configProperty == null) {
                 LOGGER.debug("Font size property not found.");
@@ -375,7 +375,7 @@ public class Haiku {
 
     public static void setDefaultSize(int size) {
         Set<Object> keySet = UIManager.getLookAndFeelDefaults().keySet();
-        Object[] keys = keySet.toArray(new Object[keySet.size()]);
+        Object[] keys = keySet.toArray(new Object[0]);
 
         for (Object key : keys) {
 

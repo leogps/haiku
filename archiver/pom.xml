@@ -14,7 +14,7 @@
 
   <properties>
     <jpackage.windows.path>${java.home}/bin/jpackage.exe</jpackage.windows.path>
-    <macos.app.dir.name>haiku-macos-${os.arch}.app</macos.app.dir.name>
+    <jpackage.macos.path>${java.home}/bin/jpackage</jpackage.macos.path>
   </properties>
 
   <profiles>
@@ -54,6 +54,9 @@
                     <mkdir dir="${project.build.directory}/jpackage-amd64/config"/>
                     <copy file="${project.basedir}/config/win-app.properties"
                           tofile="${project.build.directory}/jpackage-amd64/config/win-app.properties"
+                          overwrite="true"/>
+                    <copy file="${project.basedir}/src/main/resources/log4j2.xml"
+                          tofile="${project.build.directory}/jpackage-amd64/log4j2.xml"
                           overwrite="true"/>
                     <mkdir dir="${project.build.directory}/jpackage-amd64/winOs/amd64"/>
                     <copy todir="${project.build.directory}/jpackage-amd64/winOs/amd64"
@@ -153,56 +156,121 @@
       </activation>
       <build>
         <plugins>
-          <!-- Building MacOS native App using the template. -->
+          <!-- Building macOS native app using jpackage. -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
             <version>3.1.0</version>
             <executions>
-              <!-- macos-app-build -->
+              <!-- macos-amd64-component-gather -->
               <execution>
-                <id>macos-app-build</id>
+                <id>macos-${os.arch}-component-gather</id>
                 <phase>package</phase>
                 <configuration>
                   <target>
-                    <mkdir dir="${project.build.directory}/${macos.app.dir.name}"/>
-                    <copy todir="${project.build.directory}/${macos.app.dir.name}"
-                          overwrite="true">
-                      <fileset dir="${project.basedir}/macos-app-template"/>
-                    </copy>
-                    <chmod file="${project.build.directory}/${macos.app.dir.name}/Contents/MacOS/haiku.sh"
+                    <mkdir dir="${project.build.directory}/jpackage-${os.arch}"/>
+                    <copy file="${project.basedir}/../player-ui/target/haiku-jar-with-dependencies.jar"
+                          tofile="${project.build.directory}/jpackage-${os.arch}/haiku.jar"
+                          overwrite="true"/>
+                    <mkdir dir="${project.build.directory}/jpackage-${os.arch}/youtube-dl-exec"/>
+                    <copy file="${project.basedir}/../youtube-dl-exec/youtube-dl"
+                          tofile="${project.build.directory}/jpackage-${os.arch}/youtube-dl-exec/youtube-dl"
+                          overwrite="true"/>
+                    <chmod file="${project.build.directory}/jpackage-${os.arch}/youtube-dl-exec/youtube-dl"
                            perm="ugo+rx"/>
-
-                    <!-- Using latest LibVLC. -->
-                    <copy todir="${project.build.directory}/${macos.app.dir.name}/Contents/MacOS/LibVLC/macOs/${os.arch}"
+                    <mkdir dir="${project.build.directory}/jpackage-${os.arch}/config"/>
+                    <copy file="${project.basedir}/config/mac-app.properties"
+                          tofile="${project.build.directory}/jpackage-${os.arch}/config/mac-app.properties"
+                          overwrite="true"/>
+                    <copy file="${project.basedir}/src/main/resources/log4j2.xml"
+                          tofile="${project.build.directory}/jpackage-${os.arch}/log4j2.xml"
+                          overwrite="true"/>
+                    <mkdir dir="${project.build.directory}/jpackage-${os.arch}/LibVLC/macOs/${os.arch}"/>
+                    <copy todir="${project.build.directory}/jpackage-${os.arch}/LibVLC/macOs/${os.arch}"
                           overwrite="true">
                       <fileset dir="${project.basedir}/../LibVLC/macOs/${os.arch}"/>
                     </copy>
-
-                    <!-- Using YouTube-DL. -->
-                    <copy todir="${project.build.directory}/${macos.app.dir.name}/Contents/MacOS/youtube-dl-exec"
-                          overwrite="true">
-                      <fileset dir="${project.basedir}/../youtube-dl-exec"/>
-                    </copy>
-                    <chmod file="${project.build.directory}/${macos.app.dir.name}/Contents/MacOS/youtube-dl-exec/youtube-dl"
-                           perm="ugo+rx"/>
-
-                    <!-- Using config. -->
-                    <mkdir dir="${project.build.directory}/${macos.app.dir.name}/Contents/MacOs/config"/>
-                    <copy file="${project.basedir}/config/mac-app.properties"
-                          tofile="${project.build.directory}/${macos.app.dir.name}/Contents/MacOS/config/mac-app.properties"
-                          overwrite="true"/>
-
-                    <!-- main-jar -->
-                    <mkdir dir="${project.build.directory}/${macos.app.dir.name}/Contents/Java"/>
-                    <copy file="${project.basedir}/../player-ui/target/haiku-jar-with-dependencies.jar"
-                          tofile="${project.build.directory}/${macos.app.dir.name}/Contents/Java/haiku.jar"
-                          overwrite="true"/>
                   </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>
                 </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>macos-${os.arch}-installer</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>${jpackage.macos.path}</executable>
+                  <workingDirectory>${project.build.directory}/jpackage-${os.arch}</workingDirectory>
+                  <arguments>
+                    <!-- type -->
+                    <argument>--type</argument>
+                    <argument>dmg</argument>
+                    <!-- app version -->
+                    <argument>--app-version</argument>
+                    <argument>${project.version}</argument>
+                    <!-- name -->
+                    <argument>--name</argument>
+                    <argument>haiku</argument>
+                    <!-- destination -->
+                    <argument>--dest</argument>
+                    <argument>${project.build.directory}/haiku-${os.arch}-installer</argument>
+                    <!-- temp folder -->
+                    <argument>--temp</argument>
+                    <argument>${project.build.directory}/jpackage-${os.arch}-temp</argument>
+                    <!-- verbose -->
+                    <argument>--verbose</argument>
+                    <!-- input -->
+                    <argument>--input</argument>
+                    <argument>${project.build.directory}/jpackage-${os.arch}</argument>
+                    <!-- icon -->
+                    <argument>--icon</argument>
+                    <argument>${project.basedir}/src/main/resources/haiku.icns</argument>
+                    <!-- main-jar (relative-path) -->
+                    <argument>--main-jar</argument>
+                    <argument>haiku.jar</argument>
+                    <!-- about-url -->
+                    <argument>--about-url</argument>
+                    <argument>https://github.com/leogps/haiku</argument>
+                    <!-- license-file -->
+                    <argument>--license-file</argument>
+                    <argument>${project.basedir}/../LICENSE</argument>
+                    <!-- resource-dir -->
+                    <argument>--resource-dir</argument>
+                    <argument>${project.basedir}/macos</argument>
+                    <!-- mac-package-name -->
+                    <argument>--mac-package-name</argument>
+                    <argument>Haiku</argument>
+                    <!-- mac-package-identifier -->
+                    <argument>--mac-package-identifier</argument>
+                    <argument>org.gps.haiku</argument>
+                    <!-- java-options: current-working-directory -->
+                    <argument>--java-options</argument>
+                    <argument>-Dhaiku.cwd.path=$APPDIR</argument>
+                    <!-- java-options: log4j-config-file -->
+                    <argument>--java-options</argument>
+                    <argument>-Dhaiku.log4j.config.file=$APPDIR/log4j2.xml</argument>
+                    <!-- java-options: mac-app-properties -->
+                    <argument>--java-options</argument>
+                    <argument>-Dhaiku.mac.properties.file=$APPDIR/config/mac-app.properties</argument>
+                    <!-- java-options: enable-antialiasing -->
+                    <argument>--java-options</argument>
+                    <argument>-Dapple.awt.antialiasing=true</argument>
+                    <!-- java-options: enable-opengl -->
+                    <argument>--java-options</argument>
+                    <argument>-Dsun.java2d.opengl=true</argument>
+                  </arguments>
+                </configuration>
               </execution>
             </executions>
           </plugin>
