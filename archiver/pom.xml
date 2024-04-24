@@ -162,7 +162,7 @@
             <artifactId>maven-antrun-plugin</artifactId>
             <version>3.1.0</version>
             <executions>
-              <!-- macos-amd64-component-gather -->
+              <!-- macos-${os.arch}-component-gather -->
               <execution>
                 <id>macos-${os.arch}-component-gather</id>
                 <phase>package</phase>
