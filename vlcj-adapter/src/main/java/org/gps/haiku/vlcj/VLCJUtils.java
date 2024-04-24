@@ -20,6 +20,10 @@ public class VLCJUtils {
     private static final Logger LOGGER = LogManager.getLogger(VLCJUtils.class);
 
     static {
+        useVlcConfig();
+    }
+
+    private static void useVlcConfig() {
         String osArch = System.getProperty("os.arch");
         String vlcPathProperty = String.format("vlc-%s", osArch);
         String vlcPluginsPathProperty = String.format("vlc-%s-plugins", osArch);
@@ -28,17 +32,20 @@ public class VLCJUtils {
         LOGGER.info("VlcPluginsPathProperty: {}", vlcPluginsPathProperty);
 
         String vlcPath = PropertyManager.getProperty(vlcPathProperty);
-        if (PropertyManager.isRelativePath(vlcPath)) {
-            vlcPath = buildFullPathFromRelativePath(vlcPath);
-        }
-        LOGGER.info("VlcPath: {}", vlcPath);
-
         String vlcPluginsPath = PropertyManager.getProperty(vlcPluginsPathProperty);
-        if (PropertyManager.isRelativePath(vlcPluginsPath)) {
-            vlcPluginsPath = buildFullPathFromRelativePath(vlcPluginsPath);
-        }
-        LOGGER.info("VlcPluginsPath: {}", vlcPluginsPath);
+        if (vlcPath != null && vlcPluginsPath != null) { 
+            if (PropertyManager.isRelativePath(vlcPath)) {
+                vlcPath = buildFullPathFromRelativePath(vlcPath);
+            }
+            LOGGER.info("VlcPath: {}", vlcPath);
 
+            if (PropertyManager.isRelativePath(vlcPluginsPath)) {
+                vlcPluginsPath = buildFullPathFromRelativePath(vlcPluginsPath);
+            }
+            LOGGER.info("VlcPluginsPath: {}", vlcPluginsPath);
+        } else {
+            LOGGER.warn("VLC config missing; VlcPath: {}; VlcPluginsPath: {}", vlcPath, vlcPluginsPath);
+        }
         try {
             System.setProperty("jna.debug_load", "true");
 
@@ -60,6 +67,7 @@ public class VLCJUtils {
                 LOGGER.info(String.format("VLCJ version %s", getVlcJVersion()));
             }
         }
+
 
     }
 

@@ -132,6 +132,9 @@ public class PropertyManager {
      *
      */
     public static boolean isRelativePath(String propertiesFilePath) {
+        if (propertiesFilePath == null) {
+            return false;
+        }
         if (!OSInfo.isOSWin()) {
             return !propertiesFilePath.startsWith(File.separator);
         }
