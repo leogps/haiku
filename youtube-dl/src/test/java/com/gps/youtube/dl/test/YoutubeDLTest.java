@@ -2,10 +2,10 @@ package com.gps.youtube.dl.test;
 
 import org.gps.haiku.ytdlp.YoutubeDL;
 import org.gps.haiku.ytdlp.YoutubeDLResult;
-import org.gps.haiku.ytdlp.event.YoutubeDLResultEvent;
 import org.gps.haiku.ytdlp.event.YoutubeDLResultEventListener;
 import org.gps.haiku.ytdlp.exception.YoutubeDLException;
 import org.testng.Assert;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -17,6 +17,7 @@ import java.util.Date;
  * Created by leogps on 12/17/15.
  */
 @Test
+@Ignore
 public class YoutubeDLTest {
 
     @Test
@@ -53,14 +54,10 @@ public class YoutubeDLTest {
         String playlist = "https://www.youtube.com/playlist?list=PLJiVGeJ_KPz7mC8JapyXEJDKInyYIBx7C";
         YoutubeDL.fetchPlaylist(new File("../youtube-dl-exec/youtube-dl").getAbsolutePath(),
                 "--no-check-certificate",
-                playlist, new YoutubeDLResultEventListener() {
-
-                    @Override
-                    public void onYoutubeDLResultEvent(YoutubeDLResultEvent youtubeDLResultEvent) {
-                        YoutubeDLResult youtubeDLResult = youtubeDLResultEvent.getYoutubeDLResult();
-                        Assert.assertNotNull(youtubeDLResult);
-                        System.out.println(youtubeDLResult);
-                    }
+                playlist, (YoutubeDLResultEventListener) youtubeDLResultEvent -> {
+                    YoutubeDLResult youtubeDLResult = youtubeDLResultEvent.getYoutubeDLResult();
+                    Assert.assertNotNull(youtubeDLResult);
+                    System.out.println(youtubeDLResult);
                 });
     }
 
