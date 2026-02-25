@@ -11,15 +11,18 @@
 
   <properties>
     <http.components.version>5.2.1</http.components.version>
-    <log4j.version>2.17.2</log4j.version>
-    <jackson.version>2.13.5</jackson.version>
+    <log4j.version>2.25.3</log4j.version>
+    <jackson.version>2.15.0</jackson.version>
     <jersey.version>3.0.11</jersey.version>
     <testng.version>7.8.0</testng.version>
     <openjfx.version>18.0.2</openjfx.version>
+    <commons-io.version>2.14.0</commons-io.version>
+    <commons-lang.version>3.18.0</commons-lang.version>
 
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <intellij.version>241.14494.241</intellij.version>
+    <intellij.version>253.30387.127</intellij.version>
+    <intellij-java-compiler.version>253.30387.90</intellij-java-compiler.version>
   </properties>
 
   <modules>
@@ -49,7 +52,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.11.0</version>
+      <version>${commons-io.version}</version>
     </dependency>
 
     <dependency>

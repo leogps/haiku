@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.jetbrains.intellij.java</groupId>
             <artifactId>java-compiler</artifactId>
-            <version>${intellij.version}</version>
+            <version>${intellij-java-compiler.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
